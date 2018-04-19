@@ -9,11 +9,11 @@ using namespace std;
 class Blrsm {
 public:
 	vector<int> TAA();
-	Blrsm(const Graph &topo,RequestList requests);
+	Blrsm(Graph &topo, RequestList &requests);
 
 private:
-	const Graph &topo;
-	const RequestList &requests;
+	Graph &topo;
+	RequestList &requests;
 	vector<vector<double> > Pr_ij;
 	vector<double> delta;
 	vector<double> scaling;
