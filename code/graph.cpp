@@ -222,3 +222,7 @@ int Graph::linkCapacity(int edgeIndex) {
 bool Graph::linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex) {
 	return linkInPath(edgeIndex / VertexNum, edgeIndex%VertexNum, srcDst.first, srcDst.second, pathIndex);
 }
+
+int pathCapacityEdgeIndex(pair<int, int>srcDst, int pathIndex) {
+	//...........
+}
