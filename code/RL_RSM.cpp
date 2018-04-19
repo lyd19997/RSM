@@ -219,7 +219,15 @@ void MAA::printResult() {
 		}
 		printf("\n");
 	}
-
+	printf("\n\n");
+	printf("final cost : ");
+	int cost = 0;
+	for(int i = 0; i < VertexNum; i++){
+		for(int j = 0; j < VertexNum; j++){
+			cost += final_bandwidth[i][j] * graph.BandwidthPrice[i][j];
+		}
+	}
+    printf("%d\n", cost);
 }
 
 int MAA::getEdgeBandwidthUsage(int src, int dst, int time) {

@@ -7,14 +7,12 @@
 #include "requestList.h"
 #include "gurobi_c++.h"
 #include "cstdio"
+#include "const.h"
 //#include "stdlib.h"
 
 
 using namespace std;
-#define MaxVertexNum 30
-#define MaxBandwidth 3000
-#define MaxBandwidthPrice 10
-#define MaxTime 50
+
 
 
 class MAA {
