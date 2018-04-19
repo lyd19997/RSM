@@ -1,6 +1,8 @@
 #include"BL_RSM.h"
 #include"const.h"
 #include<math.h>
+#define DELTA0(x) (x-(1+x)*log(1+x))
+#define SCALING(x) ((x)*exp(-1 * (x))) 
 
 Blrsm::Blrsm(Graph &topo, RequestList &requests):topo(topo),requests(requests) {// scaling,delta 1-k,
 	delta.push_back(0);

@@ -59,7 +59,7 @@ void MinCost::pathSelecting() {
         int start = requests[i].src, end = requests[i].dst;
         vector<vector<int>> paths = graph.Paths[start][end];
         int min = INT_MAX, index = 0;
-        int cost[paths.size()];
+        int *cost = new int [paths.size()];
         for(int w = 0; w < paths.size(); w++){
             cost[w] = 0;
         }
