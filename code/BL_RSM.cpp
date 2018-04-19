@@ -33,7 +33,7 @@ vector<int> Blrsm::TAA() {
 		Pr_ij.push_back(vector<double>(x_ij[i].size(), 0));
 		for (int j = 0; j < x_ij[i].size(); ++j) 
 		{
-			Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j)];//...
+			Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacity(requests[i].getSrcDst(), j)];//...
 			Fs += Pr_ij.back()[j] * requests[i].value;
 		}
 	}

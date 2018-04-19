@@ -17,6 +17,7 @@ using namespace std;
 
 class MAA {
 public:
+    MAA(Graph &topo, RequestList &requests);
 	MAA(const char *gFilename, int time, RequestList requests_);
 
 	MAA(int vNum, int eNum, int time, RequestList requests_);

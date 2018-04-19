@@ -4,6 +4,30 @@
 
 #include "FlowBase.h"
 
+FlowBase::FlowBase(Graph &topo, RequestList &requests) : graph(topo), requests(requests){
+    VertexNum = graph.getVertexNum();
+    EdgeNum = graph.getEdgeNum();
+    totalTime = PEROID;
+    for(int i = 0; i < VertexNum; i++){
+        for(int j = 0; j < VertexNum; j++){
+            final_bandwidth[i][j] = 0;
+        }
+    }
+    for(int t = 0; t < totalTime; t++){
+        for(int i = 0; i < VertexNum; i++){
+            for(int j = 0; j < VertexNum; j++){
+                bandwidthTime[t][i][j] = 0;
+            }
+        }
+    }
+    VaReqPath_init();
+    iReqPathEdge_init();
+    pathSelecting();
+    bandwidthTime_init();
+    bandwidthCal();
+    printResult();
+}
+
 FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_){
     VertexNum = vNum;
     EdgeNum = eNum;
@@ -16,7 +40,7 @@ FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(v
     for(int t = 0; t < totalTime; t++){
         for(int i = 0; i < VertexNum; i++){
             for(int j = 0; j < VertexNum; j++){
-                bandwidthTime[time][i][j] = 0;
+                bandwidthTime[t][i][j] = 0;
             }
         }
     }
@@ -40,7 +64,7 @@ FlowBase::FlowBase(const char* gFilename, int time, RequestList requests_) :grap
     for(int t = 0; t < totalTime; t++){
         for(int i = 0; i < VertexNum; i++){
             for(int j = 0; j < VertexNum; j++){
-                bandwidthTime[time][i][j] = 0;
+                bandwidthTime[t][i][j] = 0;
             }
         }
     }
@@ -170,3 +194,4 @@ void FlowBase::printResult() {
 int FlowBase::getEdgeBandwidthUsage(int src, int dst, int time) {
     return bandwidthTime[time][src][dst];
 }
+

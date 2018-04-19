@@ -1,6 +1,8 @@
 #include"requestList.h"
 #include"const.h"
+#include "cmath"
 using namespace std;
+
 int possion(int lambda)  /* 产生一个泊松分布的随机数，Lamda为总体平均数*/
 {
 	const int precision = 1000;

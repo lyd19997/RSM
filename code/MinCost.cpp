@@ -6,11 +6,11 @@
 
 using namespace std;
 
-MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_){
-    VertexNum = vNum;
-    EdgeNum = eNum;
-    totalTime = time;
-//    requestsNum = requests.size();
+
+MinCost::MinCost(Graph &topo, RequestList &requests): graph(topo), requests(requests) {
+    VertexNum = graph.getVertexNum();
+    EdgeNum = graph.getEdgeNum();
+    totalTime = PEROID;
     for(int i = 0; i < VertexNum; i++){
         for(int j = 0; j < VertexNum; j++){
             final_bandwidth[i][j] = 0;
@@ -19,7 +19,31 @@ MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNu
     for(int t = 0; t < totalTime; t++){
         for(int i = 0; i < VertexNum; i++){
             for(int j = 0; j < VertexNum; j++){
-                bandwidthTime[time][i][j] = 0;
+                bandwidthTime[t][i][j] = 0;
+            }
+        }
+    }
+    peekBandwidth_init();
+    pathSelecting();
+    bandwidthCal();
+    printResult();
+}
+
+
+
+MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_){
+    VertexNum = vNum;
+    EdgeNum = eNum;
+    totalTime = time;
+    for(int i = 0; i < VertexNum; i++){
+        for(int j = 0; j < VertexNum; j++){
+            final_bandwidth[i][j] = 0;
+        }
+    }
+    for(int t = 0; t < totalTime; t++){
+        for(int i = 0; i < VertexNum; i++){
+            for(int j = 0; j < VertexNum; j++){
+                bandwidthTime[t][i][j] = 0;
             }
         }
     }
@@ -33,7 +57,6 @@ MinCost::MinCost(const char *gFilename, int time, RequestList requests_) :graph(
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();
     totalTime = time;
-//    requestsNum = requests.size();
     for(int i = 0; i < VertexNum; i++){
         for(int j = 0; j < VertexNum; j++){
             final_bandwidth[i][j] = 0;
@@ -42,7 +65,7 @@ MinCost::MinCost(const char *gFilename, int time, RequestList requests_) :graph(
     for(int t = 0; t < totalTime; t++){
         for(int i = 0; i < VertexNum; i++){
             for(int j = 0; j < VertexNum; j++){
-                bandwidthTime[time][i][j] = 0;
+                bandwidthTime[t][i][j] = 0;
             }
         }
     }
@@ -136,5 +159,4 @@ void MinCost::peekBandwidth_init() {
         }
     }
 }
-
 
