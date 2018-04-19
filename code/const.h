@@ -11,5 +11,9 @@
 #define MIN_DURATION 1
 #define LAMBDA 10
 #define VERTEXSIZE 19
-#define EDGESIZE 14
+#define EDGESIZE 18
 #define MEAN_TRANSFER_SIZE 5
+#define MaxVertexNum 30
+#define MaxBandwidth 3000
+#define MaxBandwidthPrice 10
+#define MaxTime 50

@@ -2,6 +2,7 @@
 #include"request.h"
 #include<vector>
 #include "string"
+
 using namespace std;
 
 
@@ -12,12 +13,13 @@ public:
 
     RequestList(string PathIn);
 
-    int size() const;
+    long int size() const;
 
 
 	Request & operator[](int i);
 	vector<Request>::iterator begin();
 	vector<Request>::iterator end();
+
 
 private:
 	vector<Request> requests;

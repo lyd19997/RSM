@@ -8,7 +8,6 @@ FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(v
     VertexNum = vNum;
     EdgeNum = eNum;
     totalTime = time;
-    requestsNum = requests.size();
     for(int i = 0; i < VertexNum; i++){
         for(int j = 0; j < VertexNum; j++){
             final_bandwidth[i][j] = 0;
@@ -17,7 +16,7 @@ FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(v
     for(int t = 0; t < totalTime; t++){
         for(int i = 0; i < VertexNum; i++){
             for(int j = 0; j < VertexNum; j++){
-                bandwidthTime[time][VertexNum][VertexNum] = 0;
+                bandwidthTime[time][i][j] = 0;
             }
         }
     }
@@ -33,7 +32,6 @@ FlowBase::FlowBase(const char* gFilename, int time, RequestList requests_) :grap
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();
     totalTime = time;
-    requestsNum = requests.size();
     for(int i = 0; i < VertexNum; i++){
         for(int j = 0; j < VertexNum; j++){
             final_bandwidth[i][j] = 0;
@@ -42,7 +40,7 @@ FlowBase::FlowBase(const char* gFilename, int time, RequestList requests_) :grap
     for(int t = 0; t < totalTime; t++){
         for(int i = 0; i < VertexNum; i++){
             for(int j = 0; j < VertexNum; j++){
-                bandwidthTime[time][VertexNum][VertexNum] = 0;
+                bandwidthTime[time][i][j] = 0;
             }
         }
     }
@@ -55,7 +53,7 @@ FlowBase::FlowBase(const char* gFilename, int time, RequestList requests_) :grap
 }
 
 void FlowBase::VaReqPath_init() {
-    for(int i = 0; i < requestsNum; i++){
+    for(int i = 0; i < requests.size(); i++){
         int start = requests[i].src, end = requests[i].dst;
         vector<vector<int>> paths = graph.Paths[start][end];
         vector<int> temp;
@@ -74,7 +72,7 @@ void FlowBase::VaReqPath_init() {
 
 void FlowBase::bandwidthTime_init() {
     for(int t = 0; t < totalTime; t++){
-        for(int i = 0; i < requestsNum; i++){
+        for(int i = 0; i < requests.size(); i++){
             if(requests[i].start > t || t > requests[i].end) continue;
             for(int p = 0; p < final_path[i].size() - 1; p++){
                 bandwidthTime[t][final_path[i][p]][final_path[i][p+1]] += requests[i].rate;
@@ -84,7 +82,7 @@ void FlowBase::bandwidthTime_init() {
 }
 
 void FlowBase::iReqPathEdge_init() {
-    for(int i = 0; i < requestsNum; i++){
+    for(int i = 0; i < requests.size(); i++){
         vector<vector<vector<int>>> temp_i;
         int start = requests[i].src, end = requests[i].dst;
         vector<vector<int>> paths = graph.Paths[start][end];
@@ -108,7 +106,7 @@ void FlowBase::iReqPathEdge_init() {
 }
 
 void FlowBase::pathSelecting() {
-    for(int i = 0; i < requestsNum; i++){
+    for(int i = 0; i < requests.size(); i++){
         int start = requests[i].src, end = requests[i].dst;
         vector<vector<int>> paths = graph.Paths[start][end];
         vector<int> tempVal(VaReqPath[i]);
@@ -121,6 +119,11 @@ void FlowBase::pathSelecting() {
         }
         vector<int> path(paths[index]);
         final_path.push_back(path);
+        printf("path for request#%d: ", i);
+        for(int j = 0; j < path.size(); j++){
+            printf("%d->", path[j]);
+        }
+        printf("\n");
     }
 }
 
@@ -139,7 +142,7 @@ void FlowBase::bandwidthCal() {
 }
 
 void FlowBase::printResult() {
-    for(int i = 0; i < requestsNum; i++){
+    for(int i = 0; i < requests.size(); i++){
         printf("route for request #%d\n", i);
         for(int j : final_path[i]){
             printf("%d->", j);
@@ -153,6 +156,15 @@ void FlowBase::printResult() {
         }
         printf("\n");
     }
+    printf("\n\n");
+    printf("final cost : ");
+    int cost = 0;
+    for(int i = 0; i < VertexNum; i++){
+        for(int j = 0; j < VertexNum; j++){
+            cost += final_bandwidth[i][j] * graph.BandwidthPrice[i][j];
+        }
+    }
+    printf("%d\n", cost);
 }
 
 int FlowBase::getEdgeBandwidthUsage(int src, int dst, int time) {

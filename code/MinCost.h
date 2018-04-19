@@ -1,22 +1,31 @@
 //
-// Created by Zhixing Zhang on 2018/4/17.
+// Created by Zhixing Zhang on 2018/4/19.
 //
+
 #include "graph.h"
 #include "requestList.h"
+#include "algorithm"
+#include <climits>
 #include "const.h"
 
 using namespace std;
 
-class FlowBase {
-public:
-    FlowBase(int vNum, int eNum, int time, RequestList requests_);
 
-    FlowBase(const char *gFilename, int time, RequestList requests_);
+
+
+
+class MinCost {
+public:
+    MinCost(int vNum, int eNum, int time, RequestList requests_);
+
+    MinCost(const char *gFilename, int time, RequestList requests_);
 
     int VertexNum;
     int EdgeNum;
     int totalTime;
     int bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
+//    long int requestsNum;
+
     vector<vector<int>> VaReqPath;//x_i,j
 
 //    int bandwidthSrcToDst[MaxVertexNum][MaxVertexNum];//c_e
@@ -28,6 +37,9 @@ public:
 
     vector<vector<int>> final_path;
     int final_bandwidth[MaxVertexNum][MaxVertexNum];//记录最终rounding之后的每条边的带宽
+    int peekBandwidth[MaxVertexNum][MaxVertexNum];//记录峰值带宽
+
+    void peekBandwidth_init();
 
     RequestList requests;
 
@@ -36,7 +48,7 @@ public:
 
 //    void bandwidthSrcToDst_init();
 
-    void bandwidthTime_init();
+//    void bandwidthTime_update();
 
     void iReqPathEdge_init();
 

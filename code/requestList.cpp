@@ -71,10 +71,11 @@ RequestList::RequestList(string PathIn) {
 	for (int i = 0; i < num; ++i) {
 		in >> id >> src >> dst >> arriveTime >> deadline >> value >> rate;
 		requests.push_back(Request(src, dst, arriveTime, deadline, value, rate));
+		cout << "request#" << i << src << dst << endl;
 	}
 }
 
-int RequestList::size() const {
+long int RequestList::size() const {
     return requests.size();
 }
 
@@ -89,5 +90,6 @@ vector<Request>::iterator RequestList::begin() {
 Request &RequestList::operator[](int i) {
     return requests[i];
 }
+
 
 

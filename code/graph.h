@@ -7,12 +7,11 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include "const.h"
 
 using namespace std;
 
-#define MaxVertexNum 30
-#define MaxBandwidthPrice 10
-#define MaxBandwidth 30
+
 
 class Graph {
 public:
