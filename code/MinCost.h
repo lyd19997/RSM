@@ -16,6 +16,7 @@ using namespace std;
 
 class MinCost {
 public:
+    MinCost(Graph &topo, RequestList &requests);
     MinCost(int vNum, int eNum, int time, RequestList requests_);
 
     MinCost(const char *gFilename, int time, RequestList requests_);

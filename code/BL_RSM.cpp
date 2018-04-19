@@ -1,6 +1,8 @@
 #include"BL_RSM.h"
 #include"const.h"
 #include<math.h>
+#define DELTA0(x) (x-(1+x)*log(1+x))
+#define SCALING(x) ((x)*exp(-1 * (x))) 
 
 Blrsm::Blrsm(Graph &topo, RequestList &requests):topo(topo),requests(requests) {// scaling,delta 1-k,
 	delta.push_back(0);
@@ -31,7 +33,7 @@ vector<int> Blrsm::TAA() {
 		Pr_ij.push_back(vector<double>(x_ij[i].size(), 0));
 		for (int j = 0; j < x_ij[i].size(); ++j) 
 		{
-			Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacity(requests[i].getSrcDst(), j)];
+			Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacity(requests[i].getSrcDst(), j)];//...
 			Fs += Pr_ij.back()[j] * requests[i].value;
 		}
 	}
@@ -113,7 +115,7 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 
 vector<vector<double> > Blrsm::relaxation_LP() {
 	vector<vector<double> > res; res.clear();
-	vector<int> addr(0);
+	vector<int> addr(1, 0);
 	for (vector<Request>::iterator it = requests.begin(); it != requests.end(); ++it)
 		addr.push_back(addr.back() + topo.pathSize(it->getSrcDst()));
 	try {

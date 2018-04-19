@@ -9,6 +9,7 @@ using namespace std;
 
 class FlowBase {
 public:
+    FlowBase(Graph &topo, RequestList &requests);
     FlowBase(int vNum, int eNum, int time, RequestList requests_);
 
     FlowBase(const char *gFilename, int time, RequestList requests_);

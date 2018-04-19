@@ -36,6 +36,7 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 			G[i][j] = false;
 			Bandwidth[i][j] = 0;
 			BandwidthPrice[i][j] = MaxBandwidthPrice;
+			BandwidthLim[i][j] = BANDWIDTH_CAPACITY;//----
 		}
 	}
 	vector<int> connected, unconnected;

@@ -4,6 +4,36 @@
 
 #include "RL_RSM.h"
 
+MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), model(*env) {
+	VertexNum = graph.getVertexNum();
+	EdgeNum = graph.getEdgeNum();
+	totalTime = PEROID;
+	requestsNum = requests.size();//***
+	for (int i = 0; i < VertexNum; i++) {
+		for (int j = 0; j < VertexNum; j++) {
+			final_bandwidth[i][j] = 0;
+		}
+	}
+	for (int t = 0; t < totalTime; t++) {
+		for (int i = 0; i < VertexNum; i++) {
+			for (int j = 0; j < VertexNum; j++) {
+				bandwidthTime[t][i][j] = 0;
+			}
+		}
+	}
+	PrReqPath_init();
+	bandwidthSrcToDst_init();
+	iReqPathEdge_init();
+	addConstraints();
+	setObj();
+	linearSolver();
+	pathSelecting();
+	bandwidthTime_init();
+	bandwidthRounding();
+	printResult();
+}
+
+
 
 MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), model(*env) {
 	VertexNum = graph.getVertexNum();
@@ -18,7 +48,7 @@ MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilenam
 	for (int t = 0; t < totalTime; t++) {
 		for (int i = 0; i < VertexNum; i++) {
 			for (int j = 0; j < VertexNum; j++) {
-				bandwidthTime[time][VertexNum][VertexNum] = 0;
+				bandwidthTime[t][i][j] = 0;
 			}
 		}
 	}
@@ -47,7 +77,7 @@ MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum)
 	for (int t = 0; t < totalTime; t++) {
 		for (int i = 0; i < VertexNum; i++) {
 			for (int j = 0; j < VertexNum; j++) {
-				bandwidthTime[time][VertexNum][VertexNum] = 0;
+				bandwidthTime[t][i][j] = 0;
 			}
 		}
 	}
