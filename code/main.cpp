@@ -5,9 +5,12 @@
 #include"graph.h"
 #include"requestList.h"
 
+
 int main() {
-	RequestList requests(VERTEXSIZE, "RequestList.txt");
+	RequestList requests(VERTEXSIZE);
+	//RequestList requests(RequestPathIn);
 	Graph topo(VERTEXSIZE, EDGESIZE);
+	Graph topo(GraphPathIn);
 	Blrsm alg(topo, requests);
 	alg.TAA();
 	MAA maa(VERTEXSIZE, EDGESIZE, PEROID, requests);
