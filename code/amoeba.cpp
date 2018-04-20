@@ -7,8 +7,20 @@ Amoeba::Amoeba(Graph topo, RequestList requests_) :topo(topo), requests(requests
 		remainCapacityPerEdge.push_back(topo.linkCapacity(i));
 }
 
+vector<int> Amoeba::schedule() {
+	for (int i = 0; i < requests.size(); ++i)
+	{
+		passPathIndex[i] = pushInPath(i, remainCapacityPerEdge);
+		if (passPathIndex[i] == -1)
+		{
+			vector<int> rescheduleReq = topTenRelatedReq(i);
+			reschedule(rescheduleReq);
+		}
+	}
+	return passPathIndex;
+}
 
-bool Amoeba::pushInPath(int indexReq) {
+bool Amoeba::pushInPath(int indexReq, vector<double> &remainCapacityPerEdge) {
 	for (int i = 0; i < topo.pathSize(requests[indexReq].getSrcDst()); ++i)
 	{
 		vector<int> edgeList = topo.getPath(requests[indexReq].getSrcDst(), i);
@@ -19,10 +31,10 @@ bool Amoeba::pushInPath(int indexReq) {
 		{
 			for (it = edgeList.begin(); it != edgeList.end(); ++it)
 				remainCapacityPerEdge[*it] -= requests[indexReq].rate;
-			return 1;
+			return i;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 vector<int> Amoeba::topTenRelatedReq(int indexReq) {
@@ -49,35 +61,46 @@ vector<int> Amoeba::topTenRelatedReq(int indexReq) {
 		Q.push(pair<double, int>(A + B, i));
 	}
 	vector<int> res;
-	int cnt = 10;
+	int cnt = 9;
 	while (!Q.empty() && cnt--)
 	{
 		res.push_back(Q.top().second);
 		Q.pop();
 	}
+	res.push_back(indexReq);
 	return res;
 }
 
-void Amoeba::reschedule(vector<int> topTen, int indexReq) {
-	double revenue = 0;
+void Amoeba::reschedule(vector<int> topTen) {
+	double maxRevenue = 0;
 	map<int, int> passPath;
 	vector<double> preAllocateRemain(remainCapacityPerEdge);
 	for (vector<int>::iterator it = topTen.begin(); it != topTen.end(); ++it)
 	{
-		for (vector<int>::iterator ite = topo.getPath(requests[*it], passPathIndex[*it]).begin(); ite != topo.getPath(requests[*it], passPathIndex[*it]).end(); ++ite)
+		for (vector<int>::iterator ite = topo.getPath(requests[*it].getSrcDst(), passPathIndex[*it]).begin(); ite != topo.getPath(requests[*it].getSrcDst(), passPathIndex[*it]).end(); ++ite)
 			preAllocateRemain[*ite] += requests[*it].rate;
-		revenue += requests[*it].value;
+		maxRevenue += requests[*it].value;
 	}
+	vector<int> resPassPath(topTen.size(), -1);
 	for (int set = 1; set < (1 << topTen.size()) - 1; ++set)
 	{
-		vector<double> allocate(remainCapacityPerEdge.size(), 0);
+		vector<double> allocate(preAllocateRemain);
+		double revenue = 0;
+		vector<int> passPath(topTen.size(), -1);
 		for (int i = 0; i < topTen.size(); ++i)
 		{
 			if (set&(1 << i))
 			{
-				for (vector<int>::iterator ite = topo.getPath(requests[i], passPathIndex[i]).begin(); ite != topo.getPath(requests[i], passPathIndex[i]).end(); ++ite)//------
-					preAllocateRemain[*ite] += requests[i].rate;
+				passPath[i] = pushInPath(topTen[i], allocate);
+				revenue += (passPath[i] == -1 ? 0 : requests[topTen[i]].value);
 			}
 		}
+		if (revenue > maxRevenue)
+		{
+			maxRevenue = revenue;
+			resPassPath = passPath;
+		}
 	}
+	for (vector<int>::iterator it = topTen.begin(); it != topTen.end(); ++it)
+		passPathIndex[*it] = resPassPath[it - topTen.begin()];
 }
