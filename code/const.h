@@ -23,5 +23,18 @@
 #define MaxBandwidthPrice 10
 
 #define BANDWIDTH_CAPACITY 30
-const std::string  RequestPathOut = "";
-const std::string  RequestPathIn = "";
+const std::string Path = ".\\data\\";
+const std::string GraphPath = Path + "Graph\\";
+const std::string RequestPath = Path + "Transfer\\";
+
+//const std::string GraphPathIn = GraphPath + "Google_topo.txt";
+const std::string GraphInPath = GraphPath + "Topo_node_" + std::to_string(VERTEXSIZE) + ".txt";
+const std::string GraphOutPath = GraphInPath;//GraphPath + "Topo_node_" + std::to_string(NODE_NUM) + ".txt";
+
+const std::string RequestPathIn = RequestPath + "Topo_node_" + std::to_string(VERTEXSIZE) + "_lambda_" + std::to_string(LAMBDA) +
+"_Peroid_" + std::to_string(PEROID) + "_Duration_" + std::to_string(MIN_DURATION) + "_TransferIn.txt";
+const std::string RequestPathOut = RequestPath;//TrafficPath + "Topo_node_" + std::to_string(NODE_NUM) + "_lambda_" + std::to_string(LAMBDA) + "_TransferIn.txt";
+												 //-------------out----------------------
+const std::string OutTrasferPath = Path /*+"_offline"*/ + "\\" + "Topo_node_" + std::to_string(VERTEXSIZE) + "_lambda_" + std::to_string(LAMBDA) +
+"_Peroid_" + std::to_string(PEROID);
+const std::string OutLinkPath = OutTrasferPath;//Path + Algorithm_Type + "\\";

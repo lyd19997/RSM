@@ -224,6 +224,7 @@ bool Graph::linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex) {
 	return linkInPath(edgeIndex / VertexNum, edgeIndex%VertexNum, srcDst.first, srcDst.second, pathIndex);
 }
 
+<<<<<<< HEAD
 void Graph::pair2EIndex_init() {
     int count = 0;
     for(int i = 0; i < VertexNum; i++){
@@ -244,3 +245,8 @@ void Graph::pair2EIndex_init() {
 int Graph::getEdgeIndex(pair<int, int> srcDst) {
 	return pair2EIndex[srcDst.first][srcDst.second];
 }
+=======
+int pathCapacityEdgeIndex(pair<int, int>srcDst, int pathIndex) {
+	//...........
+}
+>>>>>>> lyd
