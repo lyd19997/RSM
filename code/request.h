@@ -11,4 +11,5 @@ public:
 
 	pair<int, int> getSrcDst();
 	Request(int id_, int src_, int dst_, int start_, int end_, int value_, double rate_);
+
 };

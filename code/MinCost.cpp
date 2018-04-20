@@ -9,7 +9,6 @@ using namespace std;
 
 MinCost::MinCost(Graph &topo, RequestList &requests): graph(topo), requests(requests) {
     VertexNum = graph.getVertexNum();
-    EdgeNum = graph.getEdgeNum();
     totalTime = PEROID;
     for(int i = 0; i < VertexNum; i++){
         for(int j = 0; j < VertexNum; j++){
@@ -33,7 +32,6 @@ MinCost::MinCost(Graph &topo, RequestList &requests): graph(topo), requests(requ
 
 MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_){
     VertexNum = vNum;
-    EdgeNum = eNum;
     totalTime = time;
     for(int i = 0; i < VertexNum; i++){
         for(int j = 0; j < VertexNum; j++){
@@ -55,7 +53,6 @@ MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNu
 
 MinCost::MinCost(const char *gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_){
     VertexNum = graph.getVertexNum();
-    EdgeNum = graph.getEdgeNum();
     totalTime = time;
     for(int i = 0; i < VertexNum; i++){
         for(int j = 0; j < VertexNum; j++){
@@ -81,15 +78,15 @@ void MinCost::pathSelecting() {
     for(int i = 0; i < requests.size(); i++){
         int start = requests[i].src, end = requests[i].dst;
         vector<vector<int>> paths = graph.Paths[start][end];
-        int min = INT_MAX, index = 0;
-        int *cost = new int [paths.size()];
+        double min = INT_MAX * 1.0, index = 0;
+        auto *cost = new double [paths.size()];
         for(int w = 0; w < paths.size(); w++){
             cost[w] = 0;
         }
         for(int t = requests[i].start; t <= requests[i].end; t++) {
             for (int p = 0; p < paths.size(); p++) {
                 for (int j = 0; j < paths[p].size() - 1; j++) {
-                    int restBandwidth = peekBandwidth[paths[p][j]][paths[p][j + 1]] - bandwidthTime[t][paths[p][j]][paths[p][j + 1]];
+                    double restBandwidth = peekBandwidth[paths[p][j]][paths[p][j + 1]] - bandwidthTime[t][paths[p][j]][paths[p][j + 1]];
                     cost[p] += (requests[i].rate - restBandwidth) * graph.BandwidthPrice[paths[p][j]][paths[p][j + 1]];
                 }
             }
@@ -117,7 +114,7 @@ void MinCost::bandwidthCal() {
     for(int s = 0; s < VertexNum; s++){
         for(int d = 0; d < VertexNum; d++){
 
-            final_bandwidth[s][d] = peekBandwidth[s][d];
+            final_bandwidth[s][d] = int (peekBandwidth[s][d] + 0.5);
         }
     }
 }
@@ -148,7 +145,7 @@ void MinCost::printResult() {
     printf("%d\n", cost);
 }
 
-int MinCost::getEdgeBandwidthUsage(int src, int dst, int time) {
+double MinCost::getEdgeBandwidthUsage(int src, int dst, int time) {
     return bandwidthTime[time][src][dst];
 }
 

@@ -12,7 +12,7 @@ Graph::Graph(const char *filename) {
 		for (int j = 0; j < VertexNum; j++) {
 			G[i][j] = false;
 			Bandwidth[i][j] = 0;
-			BandwidthLim[i][j] = 0;
+			BandwidthLim[i][j] = BANDWIDTH_CAPACITY;
 			BandwidthPrice[i][j] = MaxBandwidthPrice;
 		}
 	}
@@ -22,6 +22,7 @@ Graph::Graph(const char *filename) {
 		G[start][terminate] = true;
 		BandwidthPrice[start][terminate] = price;
 	}
+	pair2EIndex_init();
 	printGraph();
 	findPaths();
 	printPaths();
@@ -78,7 +79,7 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 			leftNum--;
 		}
 	}
-
+    pair2EIndex_init();
 	printGraph();
 	findPaths();
 	printPaths();
@@ -221,4 +222,25 @@ int Graph::linkCapacity(int edgeIndex) {
 
 bool Graph::linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex) {
 	return linkInPath(edgeIndex / VertexNum, edgeIndex%VertexNum, srcDst.first, srcDst.second, pathIndex);
+}
+
+void Graph::pair2EIndex_init() {
+    int count = 0;
+    for(int i = 0; i < VertexNum; i++){
+        for(int j = i + 1; j < VertexNum; j++){
+            if(G[i][j]){
+                pair2EIndex[i][j] = count;
+                count ++;
+                pair2EIndex[j][i] = count;
+                count ++;
+            }else{
+				pair2EIndex[i][j] = -1;
+				pair2EIndex[j][i] = -1;
+            }
+        }
+    }
+}
+
+int Graph::getEdgeIndex(pair<int, int> srcDst) {
+	return pair2EIndex[srcDst.first][srcDst.second];
 }

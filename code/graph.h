@@ -20,10 +20,16 @@ public:
 
 	bool G[MaxVertexNum][MaxVertexNum];
 	double Bandwidth[MaxVertexNum][MaxVertexNum];
-	int BandwidthLim[MaxVertexNum][MaxVertexNum];//没条边的最大容量限定
+	int BandwidthLim[MaxVertexNum][MaxVertexNum];//每条边的最大容量限定
 	int BandwidthPrice[MaxVertexNum][MaxVertexNum];
 
-	vector<vector<int>> Paths[MaxVertexNum][MaxVertexNum];
+	int pair2EIndex[VERTEXSIZE][VERTEXSIZE];
+
+	void pair2EIndex_init();
+
+	int getEdgeIndex(pair<int, int> srcDst);//得到的是有向边的编号
+
+	vector<vector<int>>Paths[MaxVertexNum][MaxVertexNum];
 
 	Graph(const char * filename);//从文件中生成图
 	Graph(int vertexNum, int edgeNum);//生成无向联通图

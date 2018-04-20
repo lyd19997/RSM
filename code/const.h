@@ -6,6 +6,7 @@
 #include<time.h>
 #include<vector>
 #include<iostream>
+#include "algorithm"
 
 #define EPS 1e-5
 //==============

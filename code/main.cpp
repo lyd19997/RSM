@@ -3,6 +3,7 @@
 #include"RL_RSM.h"
 #include "FlowBase.h"
 #include "MinCost.h"
+#include "ValueFirst.h"
 
 
 #define DEBUG
@@ -13,8 +14,8 @@ int main() {
 #endif
 	RequestList requests(VERTEXSIZE);
 	Graph topo(VERTEXSIZE, EDGESIZE);
-	Blrsm alg(topo, requests);
-	alg.TAA();
+//	Blrsm alg(topo, requests);
+//	alg.TAA();
     printf("MAA\n");
 //	MAA maa(VERTEXSIZE, EDGESIZE, PEROID, requests);
 	MAA maa(topo, requests);
@@ -25,5 +26,7 @@ int main() {
     MinCost mc(topo, requests);
 //    MinCost mc(VERTEXSIZE, EDGESIZE, PEROID, requests);
 	//...
+	printf("value first\n");
+	ValueFirst vf(topo, requests);
 	return 0;
 }

@@ -22,36 +22,19 @@ public:
     MinCost(const char *gFilename, int time, RequestList requests_);
 
     int VertexNum;
-    int EdgeNum;
     int totalTime;
-    int bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
-//    long int requestsNum;
+    double bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
 
-    vector<vector<int>> VaReqPath;//x_i,j
-
-//    int bandwidthSrcToDst[MaxVertexNum][MaxVertexNum];//c_e
-
-
-    vector<vector<vector<vector<int>>>> iReqPathEdge; //I_i,j,e
-
+    RequestList requests;
     Graph graph;
 
     vector<vector<int>> final_path;
     int final_bandwidth[MaxVertexNum][MaxVertexNum];//记录最终rounding之后的每条边的带宽
-    int peekBandwidth[MaxVertexNum][MaxVertexNum];//记录峰值带宽
+    double peekBandwidth[MaxVertexNum][MaxVertexNum];//记录峰值带宽
 
     void peekBandwidth_init();
 
-    RequestList requests;
 
-
-    void VaReqPath_init();
-
-//    void bandwidthSrcToDst_init();
-
-//    void bandwidthTime_update();
-
-    void iReqPathEdge_init();
 
     void pathSelecting();
 
@@ -59,7 +42,7 @@ public:
 
     void printResult();
 
-    int getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
+    double getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
 };
 
 

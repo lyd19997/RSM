@@ -61,7 +61,7 @@ RequestList::RequestList(string PathIn) {
 	ifstream in(PathIn);
 	if (!in.is_open()) {
 		std::cout << "requestIn error" << endl;
-		while (1);
+		exit(1);
 	}
 	int num, id, src, dst, arriveTime, deadline, value;
 	double rate;
