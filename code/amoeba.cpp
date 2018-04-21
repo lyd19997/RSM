@@ -2,9 +2,10 @@
 #include<queue>
 using namespace std;
 
-Amoeba::Amoeba(Graph topo, RequestList requests_) :topo(topo), requests(requests_), passPathIndex(requests_.size(), -1) {
-	for (int i = 0; i < topo.getEdgeNum(); ++i)
-		remainCapacityPerEdge.push_back(topo.linkCapacity(i));
+Amoeba::Amoeba(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), passPathIndex(requests_.size(), -1), remainCapacityPerEdge(PEROID, vector<double>()) {
+	for (int t = 0; t < PEROID; ++t)
+		for (int i = 0; i < topo.getEdgeNum(); ++i)
+			remainCapacityPerEdge[t].push_back(topo.linkCapacity(i));
 }
 
 vector<int> Amoeba::schedule() {
@@ -20,17 +21,22 @@ vector<int> Amoeba::schedule() {
 	return passPathIndex;
 }
 
-bool Amoeba::pushInPath(int indexReq, vector<double> &remainCapacityPerEdge) {
+bool Amoeba::pushInPath(int indexReq, vector<vector<double>> &remainCapacityPerEdge) {
 	for (int i = 0; i < topo.pathSize(requests[indexReq].getSrcDst()); ++i)
 	{
 		vector<int> edgeList = topo.getPath(requests[indexReq].getSrcDst(), i);
 		vector<int>::iterator it;
-		for (it = edgeList.begin(); it != edgeList.end() && !(remainCapacityPerEdge[*it] < requests[indexReq].rate); ++it)
-			;
+		for (int t = requests[indexReq].start; t <= requests[indexReq].end; ++t)
+		{
+			for (it = edgeList.begin(); it != edgeList.end() && !(remainCapacityPerEdge[t][*it] < requests[indexReq].rate); ++it)
+				;
+			if (it != edgeList.end()) break;
+		}
 		if (it == edgeList.end())
 		{
-			for (it = edgeList.begin(); it != edgeList.end(); ++it)
-				remainCapacityPerEdge[*it] -= requests[indexReq].rate;
+			for (int t = requests[indexReq].start; t <= requests[indexReq].end; ++t)
+				for (it = edgeList.begin(); it != edgeList.end(); ++it)
+					remainCapacityPerEdge[t][*it] -= requests[indexReq].rate;
 			return i;
 		}
 	}
@@ -53,9 +59,9 @@ vector<int> Amoeba::topTenRelatedReq(int indexReq) {
 		{
 			for (int p = 0; p < topo.pathSize(requests[indexReq].getSrcDst()); ++p)
 			{
-				vector<int> edgeList = topo.getPath(requests[indexReq].getSrcDst(), i);
+				vector<int> edgeList = topo.getPath(requests[indexReq].getSrcDst(), p);
 				for (vector<int>::iterator it = edgeList.begin(); it != edgeList.end(); ++it)
-					B += (topo.linkCapacity(*it) - remainCapacityPerEdge[*it])*topo.linkInPath(*it, requests[i].getSrcDst(), p)*requests[i].rate;
+					B += (topo.linkCapacity(*it) - remainCapacityPerEdge[t][*it])*topo.linkInPath(*it, requests[i].getSrcDst(), p)*requests[i].rate;
 			}
 		}
 		Q.push(pair<double, int>(A + B, i));
@@ -74,17 +80,18 @@ vector<int> Amoeba::topTenRelatedReq(int indexReq) {
 void Amoeba::reschedule(vector<int> topTen) {
 	double maxRevenue = 0;
 	map<int, int> passPath;
-	vector<double> preAllocateRemain(remainCapacityPerEdge);
+	vector<vector<double> > preAllocateRemain(remainCapacityPerEdge);
 	for (vector<int>::iterator it = topTen.begin(); it != topTen.end(); ++it)
 	{
-		for (vector<int>::iterator ite = topo.getPath(requests[*it].getSrcDst(), passPathIndex[*it]).begin(); ite != topo.getPath(requests[*it].getSrcDst(), passPathIndex[*it]).end(); ++ite)
-			preAllocateRemain[*ite] += requests[*it].rate;
+		for (int t = requests[*it].start; t <= requests[*it].end; ++t)
+			for (vector<int>::iterator ite = topo.getPath(requests[*it].getSrcDst(), passPathIndex[*it]).begin(); ite != topo.getPath(requests[*it].getSrcDst(), passPathIndex[*it]).end(); ++ite)
+				preAllocateRemain[t][*ite] += requests[*it].rate;
 		maxRevenue += requests[*it].value;
 	}
 	vector<int> resPassPath(topTen.size(), -1);
 	for (int set = 1; set < (1 << topTen.size()) - 1; ++set)
 	{
-		vector<double> allocate(preAllocateRemain);
+		vector<vector<double> > allocate(preAllocateRemain);
 		double revenue = 0;
 		vector<int> passPath(topTen.size(), -1);
 		for (int i = 0; i < topTen.size(); ++i)
