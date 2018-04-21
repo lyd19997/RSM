@@ -4,6 +4,7 @@
 
 #include "graph.h"
 #include "requestList.h"
+#include "result.h"
 #include "const.h"
 
 using namespace std;
@@ -13,7 +14,7 @@ public:
     ValueFirst(Graph &topo, RequestList &requests);
     ValueFirst(int vNum, int eNum, int time, RequestList requests_);
     ValueFirst(const char *gFilename, int time, RequestList requests_);
-
+    clock_t startTime;
     int VertexNum;
     int EdgeNum;
     int totalTime;
@@ -21,14 +22,16 @@ public:
 
     Graph graph;
     RequestList requests;
+    Result result;
+
 
     vector<vector<int>> final_path;
 
     double getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
 
-    void sortRequestbyValue();
     void pathSelecting();
     void printResult();
+    void result_input();
 
 };
 

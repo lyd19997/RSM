@@ -7,7 +7,8 @@
 using namespace std;
 
 
-MinCost::MinCost(Graph &topo, RequestList &requests): graph(topo), requests(requests) {
+MinCost::MinCost(Graph &topo, RequestList &requests): graph(topo), requests(requests), result() {
+    startTime = clock();
     VertexNum = graph.getVertexNum();
     totalTime = PEROID;
     for(int i = 0; i < VertexNum; i++){
@@ -22,15 +23,21 @@ MinCost::MinCost(Graph &topo, RequestList &requests): graph(topo), requests(requ
             }
         }
     }
+    result.requestNum = requests.size();
+    result.receiveNum = requests.size();
+    result.algName = "MinCost";
     peekBandwidth_init();
     pathSelecting();
     bandwidthCal();
     printResult();
+    result_input();
+    result_input();
 }
 
 
 
-MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_){
+MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), result(){
+    startTime = clock();
     VertexNum = vNum;
     totalTime = time;
     for(int i = 0; i < VertexNum; i++){
@@ -45,13 +52,18 @@ MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNu
             }
         }
     }
+    result.requestNum = requests.size();
+    result.receiveNum = requests.size();
+    result.algName = "MinCost";
     peekBandwidth_init();
     pathSelecting();
     bandwidthCal();
     printResult();
+    result_input();
 }
 
-MinCost::MinCost(const char *gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_){
+MinCost::MinCost(const char *gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), result(){
+    startTime = clock();
     VertexNum = graph.getVertexNum();
     totalTime = time;
     for(int i = 0; i < VertexNum; i++){
@@ -66,11 +78,14 @@ MinCost::MinCost(const char *gFilename, int time, RequestList requests_) :graph(
             }
         }
     }
+    result.requestNum = requests.size();
+    result.receiveNum = requests.size();
+    result.algName = "MinCost";
     peekBandwidth_init();
     pathSelecting();
     bandwidthCal();
     printResult();
-
+    result_input();
 
 }
 
@@ -99,6 +114,7 @@ void MinCost::pathSelecting() {
         }
         vector<int> path(paths[index]);
         final_path.push_back(path);
+        result.passPathIndex[i]=index;
         for(int t = requests[i].start; t <= requests[i].end; t++) {
             for (int p = 0; p < path.size() - 1; p++) {
                 bandwidthTime[t][path[p]][path[p + 1]] += requests[i].rate;
@@ -113,10 +129,11 @@ void MinCost::pathSelecting() {
 void MinCost::bandwidthCal() {
     for(int s = 0; s < VertexNum; s++){
         for(int d = 0; d < VertexNum; d++){
-
             final_bandwidth[s][d] = int (peekBandwidth[s][d] + 0.5);
+            result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s,d))] = final_path[s][d];
         }
     }
+
 }
 
 void MinCost::printResult() {
@@ -155,5 +172,16 @@ void MinCost::peekBandwidth_init() {
             peekBandwidth[i][j] = 0;
         }
     }
+}
+
+void MinCost::result_input() {
+    for(int t = 0; t < totalTime; t++){
+        for(int i = 0; i < VertexNum; i++){
+            for(int j = 0; j < VertexNum; j++){
+                result.volPerTimeEdge[t][graph.getEdgeIndex(pair<int, int>(i, j))] = getEdgeBandwidthUsage(i, j, t);
+            }
+        }
+    }
+    result.runTime = double((clock() - startTime) / CLOCKS_PER_SEC);
 }
 
