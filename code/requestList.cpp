@@ -1,6 +1,7 @@
 #include"requestList.h"
 #include"const.h"
 #include "cmath"
+#include<algorithm>
 using namespace std;
 
 int possion(int lambda)  /* 产生一个泊松分布的随机数，Lamda为总体平均数*/
@@ -70,4 +71,12 @@ RequestList::RequestList(string PathIn) {
 		in >> id >> src >> dst >> arriveTime >> deadline >> value >> rate;
 		push_back(Request(id, src, dst, arriveTime, deadline, value, rate));
 	}
+}
+
+bool cmp(Request a, Request b) {
+	return a.value / (a.end - a.start + 1) / a.rate > b.value / (b.end - b.start + 1) / b.rate;
+}
+
+void RequestList::sortRequestbyValue() {
+	sort(begin(), end(), cmp);
 }

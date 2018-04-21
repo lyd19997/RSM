@@ -12,7 +12,7 @@ private:
 	RequestList requests;
 	vector<int> passPathIndex;
 	vector<vector<double>> remainCapacityPerEdge;
-	bool pushInPath(int indexReq, vector<double> &remainCapacityPerEdge);
+	bool pushInPath(int indexReq, vector<vector<double>> &remainCapacityPerEdge);
 	vector<int> topTenRelatedReq(int indexReq);
 	void reschedule(vector<int> topTen);
 

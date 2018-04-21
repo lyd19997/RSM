@@ -37,7 +37,7 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 			G[i][j] = false;
 			Bandwidth[i][j] = 0;
 			BandwidthPrice[i][j] = MaxBandwidthPrice;
-			BandwidthLim[i][j] = BANDWIDTH_CAPACITY;//----
+			//BandwidthLim[i][j] = BANDWIDTH_CAPACITY;//----
 		}
 	}
 	vector<int> connected, unconnected;
@@ -238,8 +238,4 @@ void Graph::pair2EIndex_init() {
 int Graph::getEdgeIndex(pair<int, int> srcDst) {
 	return pair2EIndex[srcDst.first][srcDst.second];
 }
-//=======
-//int pathCapacityEdgeIndex(pair<int, int>srcDst, int pathIndex) {
-//	//...........
-//}
-//>>>>>>> lyd
+

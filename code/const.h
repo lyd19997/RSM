@@ -6,9 +6,11 @@
 #include<time.h>
 #include<vector>
 #include<iostream>
+#include<string>
 #include "algorithm"
 
 #define EPS 1e-5
+#define INF 0xfffffff
 //==============
 #define PEROID 50
 #define MaxTime 50
@@ -25,7 +27,7 @@
 #define BANDWIDTH_CAPACITY 30
 const std::string Path = ".\\data\\";
 const std::string GraphPath = Path + "Graph\\";
-const std::string RequestPath = Path + "Transfer\\";
+const std::string RequestPath = Path + "Request\\";
 
 //const std::string GraphPathIn = GraphPath + "Google_topo.txt";
 const std::string GraphInPath = GraphPath + "Topo_node_" + std::to_string(VERTEXSIZE) + ".txt";

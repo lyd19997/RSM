@@ -4,9 +4,9 @@ using namespace std;
 
 class Request {
 public:
-	const int id, value;
-	const int src, dst, start, end;
-	const double rate;
+	 int id, value;
+	 int src, dst, start, end;
+	 double rate;
 
 
 	pair<int, int> getSrcDst();
