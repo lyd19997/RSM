@@ -230,7 +230,6 @@ int Graph::pathSize(pair<int, int>srcDst) {
 	return Paths[srcDst.first][srcDst.second].size();
 }
 
-
 int Graph::linkCapacity(int edgeIndex) {
     pair<int, int> srcDst = findSrcDst(edgeIndex);
 	return BandwidthLim[srcDst.first][srcDst.second];
@@ -296,4 +295,3 @@ int Graph::pathCapacityEdgeIndex(pair<int, int> srcDst, int pathIndex) {
     }
     return getEdgeIndex(pair<int, int>(src, dst));
 }
-

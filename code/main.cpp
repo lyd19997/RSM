@@ -9,7 +9,7 @@
 
 int main() {
 
-//	srand((unsigned)time(0));
+	srand((unsigned)time(0));
 	RequestList requests(VERTEXSIZE);
 	Graph topo(VERTEXSIZE, EDGESIZE);
 //	Blrsm alg(topo, requests);

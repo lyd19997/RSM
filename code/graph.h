@@ -52,6 +52,7 @@ public:
 	int pathSize(pair<int, int>srcDst);//---
 	int pathCapacity(int src, int dst, int pathIndex);//确定（src->dst）的第pathIndex条路径的容量
 
+
 	int linkCapacity(int egeIndex);//--
 	int pathCapacity(pair<int, int>srcDst, int pathIndex);//--
 
