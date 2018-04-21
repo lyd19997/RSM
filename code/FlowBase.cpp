@@ -221,6 +221,6 @@ void FlowBase::result_input() {
             }
         }
     }
-    result.runTime = double((clock() - startTime) / CLOCKS_PER_SEC);
+    result.runTime = (clock() - startTime) * 1.0 / CLOCKS_PER_SEC;
 }
 

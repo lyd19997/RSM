@@ -39,6 +39,7 @@ ValueFirst::ValueFirst(int vNum, int eNum, int time, RequestList requests_) :gra
     }
     requests.sortRequestbyValue();
     result.algName = "ValueFirst";
+    result.requestNum = requests.size();
     pathSelecting();
     printResult();
     result_input();
@@ -58,6 +59,7 @@ ValueFirst::ValueFirst(const char *gFilename, int time, RequestList requests_) :
     }
     requests.sortRequestbyValue();
     result.algName = "ValueFirst";
+    result.requestNum = requests.size();
     pathSelecting();
     printResult();
     result_input();
@@ -66,7 +68,6 @@ ValueFirst::ValueFirst(const char *gFilename, int time, RequestList requests_) :
 
 
 void ValueFirst::pathSelecting() {
-    int count = 0;
     for(Request request : requests){
         int src = request.src, dst = request.dst;
         int start = request.start, end = request.end;
@@ -100,7 +101,7 @@ void ValueFirst::pathSelecting() {
         if(index == val.size() - 1){
             fPath.push_back(-1);
             final_path.push_back(fPath);
-            result.passPathIndex[count] = -1;
+            result.passPathIndex[id] = -1;
         }else{
             vector<int> f_Path(paths[index]);
             final_path.push_back(f_Path);
@@ -109,10 +110,9 @@ void ValueFirst::pathSelecting() {
                     bandwidthTime[t][f_Path[p]][f_Path[p + 1]] += rate;
                 }
             }
-            result.passPathIndex.push_back(index);
+            result.passPathIndex[id] = index;
             result.receiveNum += 1;
         }
-        count ++;
     }
 }
 
@@ -148,6 +148,6 @@ void ValueFirst::result_input() {
             }
         }
     }
-    result.runTime = double((clock() - startTime) / CLOCKS_PER_SEC);
+    result.runTime = (clock() - startTime) * 1.0 / CLOCKS_PER_SEC;
 }
 

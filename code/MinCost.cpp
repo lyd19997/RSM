@@ -93,7 +93,8 @@ void MinCost::pathSelecting() {
     for(int i = 0; i < requests.size(); i++){
         int start = requests[i].src, end = requests[i].dst;
         vector<vector<int>> paths = graph.Paths[start][end];
-        double min = INT_MAX * 1.0, index = 0;
+        double min = INT_MAX * 1.0;
+        int index = 0;
         auto *cost = new double [paths.size()];
         for(int w = 0; w < paths.size(); w++){
             cost[w] = 0;
@@ -182,6 +183,6 @@ void MinCost::result_input() {
             }
         }
     }
-    result.runTime = double((clock() - startTime) / CLOCKS_PER_SEC);
+    result.runTime = (clock() - startTime) * 1.0 / CLOCKS_PER_SEC;
 }
 
