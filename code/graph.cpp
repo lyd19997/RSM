@@ -230,6 +230,7 @@ int Graph::pathSize(pair<int, int>srcDst) {
 	return Paths[srcDst.first][srcDst.second].size();
 }
 
+<<<<<<< HEAD
 int Graph::linkCapacity(int edgeIndex) {
     pair<int, int> srcDst = findSrcDst(edgeIndex);
 	return BandwidthLim[srcDst.first][srcDst.second];
@@ -239,6 +240,9 @@ bool Graph::linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex) {
     pair<int, int> linksrcDst = findSrcDst(edgeIndex);
 	return linkInPath(linksrcDst.first, linksrcDst.second, srcDst.first, srcDst.second, pathIndex);
 }
+=======
+
+>>>>>>> 4948394e4e233d4d71f19c40444e731c041aabd8
 
 void Graph::pair2EIndex_init() {
     int count = 0;
@@ -260,6 +264,7 @@ void Graph::pair2EIndex_init() {
 int Graph::getEdgeIndex(pair<int, int> srcDst) {
 	return pair2EIndex[srcDst.first][srcDst.second];
 }
+<<<<<<< HEAD
 
 pair<int, int> Graph::findSrcDst(int edgeIndex) {
     for(int i = 0; i < VertexNum; i++){
@@ -295,3 +300,10 @@ int Graph::pathCapacityEdgeIndex(pair<int, int> srcDst, int pathIndex) {
 }
 
 
+=======
+//=======
+//int pathCapacityEdgeIndex(pair<int, int>srcDst, int pathIndex) {
+//	//...........
+//}
+//>>>>>>> lyd
+>>>>>>> 4948394e4e233d4d71f19c40444e731c041aabd8
