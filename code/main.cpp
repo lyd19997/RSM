@@ -6,13 +6,10 @@
 #include "ValueFirst.h"
 #include <time.h>
 
-#define DEBUG
 
 int main() {
-#ifdef DEBUG
-    freopen("result.txt", "w", stdout);
-#endif
-	srand((unsigned)time(0));
+
+//	srand((unsigned)time(0));
 	RequestList requests(VERTEXSIZE);
 	Graph topo(VERTEXSIZE, EDGESIZE);
 //	Blrsm alg(topo, requests);
