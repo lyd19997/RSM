@@ -25,6 +25,7 @@ Graph::Graph(const char *filename) {
 	pair2EIndex_init();
 	printGraph();
 	findPaths();
+	sortByLength();
 	printPaths();
 }
 
@@ -82,6 +83,7 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
     pair2EIndex_init();
 	printGraph();
 	findPaths();
+	sortByLength();
 	printPaths();
 }
 
@@ -133,6 +135,18 @@ void Graph::findPath(int start, int terminate, bool *visited) {
 		}
 	}
 	visited[start] = false;
+}
+
+bool cmp(vector<int> path1, vector<int> path2){
+	return path1.size() < path2.size();
+}
+
+void Graph::sortByLength() {
+	for(int i = 0; i < VertexNum; i++){
+		for(int j = 0; j < VertexNum; j++){
+			sort(Paths[i][j].begin(), Paths[i][j].end(), cmp);
+		}
+	}
 }
 
 int Graph::getVertexNum() {
@@ -217,11 +231,13 @@ int Graph::pathSize(pair<int, int>srcDst) {
 }
 
 int Graph::linkCapacity(int edgeIndex) {
-	return BandwidthLim[edgeIndex / VertexNum][edgeIndex%VertexNum];
+    pair<int, int> srcDst = findSrcDst(edgeIndex);
+	return BandwidthLim[srcDst.first][srcDst.second];
 }
 
 bool Graph::linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex) {
-	return linkInPath(edgeIndex / VertexNum, edgeIndex%VertexNum, srcDst.first, srcDst.second, pathIndex);
+    pair<int, int> linksrcDst = findSrcDst(edgeIndex);
+	return linkInPath(linksrcDst.first, linksrcDst.second, srcDst.first, srcDst.second, pathIndex);
 }
 
 void Graph::pair2EIndex_init() {
@@ -244,3 +260,38 @@ void Graph::pair2EIndex_init() {
 int Graph::getEdgeIndex(pair<int, int> srcDst) {
 	return pair2EIndex[srcDst.first][srcDst.second];
 }
+
+pair<int, int> Graph::findSrcDst(int edgeIndex) {
+    for(int i = 0; i < VertexNum; i++){
+        for(int j = 0; j < VertexNum; j++){
+            if(pair2EIndex[i][j] == edgeIndex) return pair<int, int>(i, j);
+        }
+    }
+    return pair<int, int>(0, 0);
+}
+
+vector<int> Graph::getPath(pair<int, int> srcDst, int pathIndex) {
+    return Paths[srcDst.first][srcDst.second][pathIndex];
+}
+
+int Graph::getPrice(int edgeIndex) {
+    pair<int, int> srcDst = findSrcDst(edgeIndex);
+    return BandwidthPrice[srcDst.first][srcDst.second];
+}
+
+int Graph::pathCapacityEdgeIndex(pair<int, int> srcDst, int pathIndex) {
+    int min = INT_MAX, src = 0, dst = 0;
+    int path_size = Paths[srcDst.first][srcDst.second].size();
+    if(pathIndex >= path_size) return -1;
+    vector<int> path(Paths[srcDst.first][srcDst.second][pathIndex]);
+    for(int i = 0; i < path.size() - 1; i++){
+        if(Bandwidth[path[i]][path[i + 1]] < min){
+            min = BandwidthLim[path[i]][path[i + 1]];
+			src = path[i];
+			dst = path[i + 1]
+        }
+    }
+    return getEdgeIndex(pair<int, int>(src, dst));
+}
+
+

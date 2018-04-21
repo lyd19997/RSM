@@ -52,8 +52,24 @@ public:
 	int pathSize(pair<int, int>srcDst);//---
 	int pathCapacity(int src, int dst, int pathIndex);//确定（src->dst）的第pathIndex条路径的容量
 
-	int linkCapacity(int degeIndex);//--
+	int linkCapacity(int egeIndex);//--
 	int pathCapacity(pair<int, int>srcDst, int pathIndex);//--
+
+
+    pair<int, int>findSrcDst(int edgeIndex); //由边的编号映射到点
+    //--------4.21---------
+    vector<int> getPath(pair<int, int>srcDst, int pathIndex);//--
+    int getPrice(int edgeIndex);
+    int pathCapacityEdgeIndex(pair<int, int>srcDst, int pathIndex);
+    void sortByLength();
+    //output file
+    //capacity
+    /*1.根据路径长度升序排序
+    2.  5个接口重新封装
+    3.输出到文件中 。路径在const.h 里
+    4.产生容量
+    5.结果输出Res类里
+    */
 };
 
 
