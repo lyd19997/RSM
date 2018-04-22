@@ -19,7 +19,21 @@ void Result::outResult() {
 	cout << cost << endl;
 	cout << algName << endl;
 	cout << runTime << endl;
-	cout << "shengxiade yihouzaixie" << endl;
+	cout << "--volPerTimeEdge--" << endl;
+	for (vector<vector<double>>::iterator it = volPerTimeEdge.begin(); it != volPerTimeEdge.end(); ++it)
+	{
+		for (vector<double>::iterator ite = it->begin(); ite != it->end(); ++ite)
+			cout << *ite << " ";
+		cout << endl;
+	}
+	cout << "--peakPerEdge--" << endl;
+	for (vector<int>::iterator ite = peakPerEdge.begin(); ite != peakPerEdge.end(); ++ite)
+		cout << *ite << " ";
+	cout << endl;
+	cout << "--passPathIndex--" << endl;
+	for (vector<int>::iterator ite = passPathIndex.begin(); ite != passPathIndex.end(); ++ite)
+		cout << *ite << " ";
+	cout << endl;
 }
 
 //int requestNum;
