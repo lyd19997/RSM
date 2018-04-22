@@ -1,7 +1,7 @@
 #include"const.h"
 #include"RSM_greedy.h"
 
-RsmGreedy::RsmGreedy(Graph topo_, RequestList requests_) :peakPerEdge(topo_.getEdgeNum(), 0), topo(topo_), requests(requests_), passPathIndex(requests_.size(), -1), volPerTimeEdge(PEROID, vector<double>(topo_.getEdgeNum(), 0)) {
+RsmGreedy::RsmGreedy(Graph topo_, RequestList requests_) :peakPerEdge(topo_.getEdgeNum(), 0), topo(topo_), requests(requests_), passPathIndex(requests_.size(), -1), volPerTimeEdge(PEROID, vector<double>(topo_.getEdgeNum(), 0)),res(topo_,requests_) {
 
 }
 

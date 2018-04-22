@@ -2,7 +2,7 @@
 #include<queue>
 using namespace std;
 
-Amoeba::Amoeba(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), passPathIndex(requests_.size(), -1), remainCapacityPerEdge(PEROID, vector<double>()), startTime(clock()), res() {
+Amoeba::Amoeba(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), passPathIndex(requests_.size(), -1), remainCapacityPerEdge(PEROID, vector<double>()), startTime(clock()), res(topo_,requests_) {
 	for (int t = 0; t < PEROID; ++t)
 		for (int i = 0; i < topo.getEdgeNum(); ++i)
 			remainCapacityPerEdge[t].push_back(topo.linkCapacity(i));

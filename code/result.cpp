@@ -13,6 +13,13 @@ void Result::getRunTime() {
 
 void Result::outResult() {
 	ofstream out(OutPath + algName + ".txt");
+	cout << requestNum << endl;
+	cout << receiveNum << endl;
+	cout << income << endl;
+	cout << cost << endl;
+	cout << algName << endl;
+	cout << runTime << endl;
+	cout << "shengxiade yihouzaixie" << endl;
 }
 
 //int requestNum;
