@@ -60,7 +60,7 @@ public:
 	void printResult();
 
 	void bandwidthTime_init();
-	void input_result()
+	void input_result();
 
 	int getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
 };

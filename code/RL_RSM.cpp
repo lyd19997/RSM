@@ -4,7 +4,7 @@
 
 #include "RL_RSM.h"
 
-MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), model(*env) , result(){
+MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), model(*env) , result(topo, requests){
 	startTime = clock();
 	VertexNum = graph.getVertexNum();
 	EdgeNum = graph.getEdgeNum();
@@ -40,7 +40,7 @@ MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), mod
 
 
 
-MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), model(*env) ,result(){
+MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), model(*env) ,result(graph, requests){
 	startTime = clock();
 	VertexNum = graph.getVertexNum();
 	EdgeNum = graph.getEdgeNum();
@@ -74,7 +74,7 @@ MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilenam
 	input_result();
 }
 
-MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), model(*env), result() {
+MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), model(*env),result(graph, requests){
 	startTime = clock();
 	VertexNum = vNum;
 	EdgeNum = eNum;

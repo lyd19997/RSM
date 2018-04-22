@@ -5,7 +5,7 @@
 #include "ValueFirst.h"
 using namespace std;
 
-ValueFirst::ValueFirst(Graph &topo, RequestList &requests) : graph(topo), requests(requests) , result(){
+ValueFirst::ValueFirst(Graph &topo, RequestList &requests) : graph(topo), requests(requests),result(graph, requests){
     startTime = clock();
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();
@@ -25,7 +25,7 @@ ValueFirst::ValueFirst(Graph &topo, RequestList &requests) : graph(topo), reques
     result_input();
 }
 
-ValueFirst::ValueFirst(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), result(){
+ValueFirst::ValueFirst(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_),result(graph, requests){
     startTime = clock();
     VertexNum = vNum;
     EdgeNum = eNum;
@@ -45,7 +45,7 @@ ValueFirst::ValueFirst(int vNum, int eNum, int time, RequestList requests_) :gra
     result_input();
 }
 
-ValueFirst::ValueFirst(const char *gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), result(){
+ValueFirst::ValueFirst(const char *gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_),result(graph, requests){
     startTime = clock();
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();

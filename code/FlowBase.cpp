@@ -4,7 +4,7 @@
 
 #include "FlowBase.h"
 
-FlowBase::FlowBase(Graph &topo, RequestList &requests) : graph(topo), requests(requests), result(){
+FlowBase::FlowBase(Graph &topo, RequestList &requests) : graph(topo), requests(requests),result(graph, requests){
     startTime = clock();
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();
@@ -33,7 +33,7 @@ FlowBase::FlowBase(Graph &topo, RequestList &requests) : graph(topo), requests(r
     result_input();
 }
 
-FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), result(){
+FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_),result(graph, requests){
     startTime = clock();
     VertexNum = vNum;
     EdgeNum = eNum;
@@ -62,7 +62,7 @@ FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(v
     result_input();
 }
 
-FlowBase::FlowBase(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), result(){
+FlowBase::FlowBase(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_),result(graph, requests){
     startTime = clock();
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();

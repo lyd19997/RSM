@@ -9,17 +9,17 @@
 
 int main() {
 
-//	srand((unsigned)time(0));
+	srand((unsigned)time(0));
 	RequestList requests(VERTEXSIZE);
 	Graph topo(VERTEXSIZE, EDGESIZE);
-//	Blrsm alg(topo, requests);
-//	alg.TAA();
+	Blrsm alg(topo, requests);
+	alg.TAA();
     printf("MAA\n");
-//	MAA maa(VERTEXSIZE, EDGESIZE, PEROID, requests);
+	// MAA maa(VERTEXSIZE, EDGESIZE, PEROID, requests);
 	MAA maa(topo, requests);
 	printf("flowbase\n");
 	FlowBase fb(topo, requests);
-//    FlowBase fb(VERTEXSIZE, EDGESIZE, PEROID, requests);
+   // FlowBase fb(VERTEXSIZE, EDGESIZE, PEROID, requests);
     printf("min cost\n");
     MinCost mc(topo, requests);
 //    MinCost mc(VERTEXSIZE, EDGESIZE, PEROID, requests);

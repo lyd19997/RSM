@@ -7,7 +7,7 @@
 using namespace std;
 
 
-MinCost::MinCost(Graph &topo, RequestList &requests): graph(topo), requests(requests), result() {
+MinCost::MinCost(Graph &topo, RequestList &requests): graph(topo), requests(requests),result(graph, requests){
     startTime = clock();
     VertexNum = graph.getVertexNum();
     totalTime = PEROID;
@@ -36,7 +36,7 @@ MinCost::MinCost(Graph &topo, RequestList &requests): graph(topo), requests(requ
 
 
 
-MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), result(){
+MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_),result(graph, requests){
     startTime = clock();
     VertexNum = vNum;
     totalTime = time;
@@ -62,7 +62,7 @@ MinCost::MinCost(int vNum, int eNum, int time, RequestList requests_) :graph(vNu
     result_input();
 }
 
-MinCost::MinCost(const char *gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), result(){
+MinCost::MinCost(const char *gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_),result(graph, requests){
     startTime = clock();
     VertexNum = graph.getVertexNum();
     totalTime = time;
