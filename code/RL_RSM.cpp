@@ -246,6 +246,7 @@ void MAA::bandwidthRounding() {
 				}
 			}
 			final_bandwidth[s][d] = int (maxBand + 0.5);
+			cout << graph.getEdgeIndex(pair<int, int>(s, d)) << endl;
 			result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int (maxBand + 0.5);
 		}
 	}
