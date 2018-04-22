@@ -18,4 +18,9 @@ public:
 	vector<int> passPathIndex;
 
 	void outResult();
+
+	Result(Graph topo_, RequestList requests_);//初始化vector
+	void getRunTime();//给runTime赋值
+private:
+	double startTime;
 };

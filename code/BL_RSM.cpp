@@ -4,7 +4,7 @@
 #define DELTA0(x) (x-(1+x)*log(1+x))
 #define SCALING(x) ((x)*exp(-1 * (x))) 
 
-Blrsm::Blrsm(Graph &topo, RequestList &requests):topo(topo),requests(requests) {// scaling,delta 1-k,
+Blrsm::Blrsm(Graph &topo, RequestList &requests) :topo(topo), requests(requests), res(topo, requests) {// scaling,delta 1-k,
 	delta.push_back(0);
 	for (int i = 0; i < topo.getEdgeNum(); ++i)
 	{
@@ -22,6 +22,11 @@ Blrsm::Blrsm(Graph &topo, RequestList &requests):topo(topo),requests(requests) {
 		scaling.push_back(mid);
 		delta.push_back((1 - mid) / mid);
 	}
+}
+
+void Blrsm::schedule() {
+	passPathIndex = TAA();
+	outRes();
 }
 
 vector<int> Blrsm::TAA() {
@@ -166,4 +171,26 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 		while (1);
 	}
 	return res;
+}
+
+void Blrsm::outRes() {
+	res.algName = "BL-SRM";
+	res.cost = 0;
+	res.income = 0;
+	res.receiveNum = 0;
+	for (int i = 0; i < requests.size(); ++i)
+		res.income += (passPathIndex[i] == -1 ? 0 : requests[i].value), res.receiveNum += 1;
+	res.passPathIndex = passPathIndex;
+	for (int e = 0; e < topo.getEdgeNum(); ++e)
+		res.peakPerEdge[e] = topo.linkCapacity(e);
+	res.requestNum = requests.size();
+	res.getRunTime();
+	for (vector<Request>::iterator it = requests.begin(); it != requests.end(); ++it)
+	{
+		for (vector<int>::iterator ite = topo.getPath(it->getSrcDst(), passPathIndex[it - requests.begin()]).begin(); ite != topo.getPath(it->getSrcDst(), passPathIndex[it - requests.begin()]).end(); ++ite)
+		{
+			for (int t = it->start; t <= it->end; ++t)
+				res.volPerTimeEdge[t][*ite] += it->rate;
+		}
+	}
 }

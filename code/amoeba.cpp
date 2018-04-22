@@ -2,7 +2,7 @@
 #include<queue>
 using namespace std;
 
-Amoeba::Amoeba(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), passPathIndex(requests_.size(), -1), remainCapacityPerEdge(PEROID, vector<double>()) {
+Amoeba::Amoeba(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), passPathIndex(requests_.size(), -1), remainCapacityPerEdge(PEROID, vector<double>()), startTime(clock()), res() {
 	for (int t = 0; t < PEROID; ++t)
 		for (int i = 0; i < topo.getEdgeNum(); ++i)
 			remainCapacityPerEdge[t].push_back(topo.linkCapacity(i));
@@ -18,6 +18,7 @@ vector<int> Amoeba::schedule() {
 			reschedule(rescheduleReq);
 		}
 	}
+	outRes();
 	return passPathIndex;
 }
 
@@ -110,4 +111,23 @@ void Amoeba::reschedule(vector<int> topTen) {
 	}
 	for (vector<int>::iterator it = topTen.begin(); it != topTen.end(); ++it)
 		passPathIndex[*it] = resPassPath[it - topTen.begin()];
+}
+
+void Amoeba::outRes() {
+	res.algName = "Amoeba";
+	res.cost = 0;
+	res.income = 0;
+	res.receiveNum = 0;
+	for (int i = 0; i < requests.size(); ++i)
+		res.income += (passPathIndex[i] == -1 ? 0 : requests[i].value), res.receiveNum += 1;
+	res.passPathIndex = passPathIndex;
+	for (int e = 0; e < topo.getEdgeNum(); ++e)
+		res.peakPerEdge[e] = topo.linkCapacity(e);
+	res.requestNum = requests.size();
+	res.runTime = (clock() - startTime)*1.0 / CLOCKS_PER_SEC;
+	for (int t = 0; t < PEROID; ++t)
+	{
+		for (int e = 0; e < topo.getEdgeNum(); ++e)
+			res.volPerTimeEdge[t][e] = topo.linkCapacity(e) - remainCapacityPerEdge[t][e];
+	}
 }

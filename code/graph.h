@@ -8,7 +8,7 @@
 #include <fstream>
 #include <vector>
 #include "const.h"
-
+#define RANDNUM 8
 using namespace std;
 
 
@@ -17,7 +17,8 @@ class Graph {
 public:
 	int VertexNum;
 	int EdgeNum;
-
+	const int Prices[RANDNUM] = { 4, 6, 14, 28, 68, 85, 37, 20 };
+	const int Capacity[RANDNUM] = { 50, 47, 41, 32, 69, 57, 73, 37 };
 	bool G[MaxVertexNum][MaxVertexNum];
 	double Bandwidth[MaxVertexNum][MaxVertexNum];
 	int BandwidthLim[MaxVertexNum][MaxVertexNum];//每条边的最大容量限定

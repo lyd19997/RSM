@@ -5,7 +5,7 @@ RsmGreedy::RsmGreedy(Graph topo_, RequestList requests_) :peakPerEdge(topo_.getE
 
 }
 
-vector<int> RsmGreedy::schedule() {
+void RsmGreedy::schedule() {
 	int flag = 1;
 	while (flag)
 	{
@@ -16,7 +16,7 @@ vector<int> RsmGreedy::schedule() {
 				pushInPath(i), flag = 1;
 		}
 	}
-	return passPathIndex;
+	resOut();
 }
 
 
@@ -56,4 +56,26 @@ bool RsmGreedy::pushInPath(int indexReq) {
 		return 1;
 	}
 	return 0;
+}
+
+void RsmGreedy::resOut() {//--
+	res.algName = "RsmGreedy";
+	res.cost = 0;
+	res.income = 0;
+	res.receiveNum = 0;
+	for (int i = 0; i < requests.size(); ++i)
+		res.income += (passPathIndex[i] == -1 ? 0 : requests[i].value), res.receiveNum += 1;
+	res.passPathIndex = passPathIndex;
+	for (int e = 0; e < topo.getEdgeNum(); ++e)
+		res.peakPerEdge[e] = topo.linkCapacity(e);
+	res.requestNum = requests.size();
+	res.getRunTime();
+	for (vector<Request>::iterator it = requests.begin(); it != requests.end(); ++it)
+	{
+		for (vector<int>::iterator ite = topo.getPath(it->getSrcDst(), passPathIndex[it - requests.begin()]).begin(); ite != topo.getPath(it->getSrcDst(), passPathIndex[it - requests.begin()]).end(); ++ite)
+		{
+			for (int t = it->start; t <= it->end; ++t)
+				res.volPerTimeEdge[t][*ite] += it->rate;
+		}
+	}
 }

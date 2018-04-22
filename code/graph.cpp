@@ -4,6 +4,8 @@
 
 #include "graph.h"
 
+
+
 Graph::Graph(const char *filename) {
 	FILE *fp;
 	fp = fopen(filename, "r");
