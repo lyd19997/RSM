@@ -41,7 +41,7 @@ public:
 	void findPaths();
 	void findPath(int start, int terminate, bool visited[]);
 
-	bool linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex);//---
+
 	bool linkInPath(int e_src, int e_dst, int src, int dst, int pathIndex);// 确定边（e_src,e_dst）是否在(src->dst)的第pathIndex条路径上
 
 	int getVertexNum();
@@ -59,7 +59,7 @@ public:
 
     pair<int, int>findSrcDst(int edgeIndex); //由边的编号映射到点
     //--------4.21---------
-	bool linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex);
+    bool linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex);//---
     vector<int> getPath(pair<int, int>srcDst, int pathIndex);//--
     int getPrice(int edgeIndex);
     int pathCapacityEdgeIndex(pair<int, int>srcDst, int pathIndex);

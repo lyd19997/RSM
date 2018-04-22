@@ -5,7 +5,8 @@
 #include "ValueFirst.h"
 using namespace std;
 
-ValueFirst::ValueFirst(Graph &topo, RequestList &requests) : graph(topo), requests(requests) {
+ValueFirst::ValueFirst(Graph &topo, RequestList &requests) : graph(topo), requests(requests) , result(){
+    startTime = clock();
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();
     totalTime = PEROID;
@@ -16,12 +17,16 @@ ValueFirst::ValueFirst(Graph &topo, RequestList &requests) : graph(topo), reques
             }
         }
     }
-    sortRequestbyValue();
+    result.requestNum = requests.size();
+    result.algName = "ValueFirst";
+    requests.sortRequestbyValue();
     pathSelecting();
     printResult();
+    result_input();
 }
 
-ValueFirst::ValueFirst(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_){
+ValueFirst::ValueFirst(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), result(){
+    startTime = clock();
     VertexNum = vNum;
     EdgeNum = eNum;
     totalTime = time;
@@ -32,11 +37,16 @@ ValueFirst::ValueFirst(int vNum, int eNum, int time, RequestList requests_) :gra
             }
         }
     }
-    sortRequestbyValue();
-
+    requests.sortRequestbyValue();
+    result.algName = "ValueFirst";
+    result.requestNum = requests.size();
+    pathSelecting();
+    printResult();
+    result_input();
 }
 
-ValueFirst::ValueFirst(const char *gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_){
+ValueFirst::ValueFirst(const char *gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), result(){
+    startTime = clock();
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();
     totalTime = time;
@@ -47,13 +57,15 @@ ValueFirst::ValueFirst(const char *gFilename, int time, RequestList requests_) :
             }
         }
     }
-    sortRequestbyValue();
-
+    requests.sortRequestbyValue();
+    result.algName = "ValueFirst";
+    result.requestNum = requests.size();
+    pathSelecting();
+    printResult();
+    result_input();
 }
 
-void ValueFirst::sortRequestbyValue() {
 
-}
 
 void ValueFirst::pathSelecting() {
     for(Request request : requests){
@@ -89,6 +101,7 @@ void ValueFirst::pathSelecting() {
         if(index == val.size() - 1){
             fPath.push_back(-1);
             final_path.push_back(fPath);
+            result.passPathIndex[id] = -1;
         }else{
             vector<int> f_Path(paths[index]);
             final_path.push_back(f_Path);
@@ -97,8 +110,9 @@ void ValueFirst::pathSelecting() {
                     bandwidthTime[t][f_Path[p]][f_Path[p + 1]] += rate;
                 }
             }
+            result.passPathIndex[id] = index;
+            result.receiveNum += 1;
         }
-
     }
 }
 
@@ -119,11 +133,21 @@ void ValueFirst::printResult() {
     printf("\n\n");
     printf("final income : ");
     printf("%d\n", income);
+    result.income = income;
 }
 
 double ValueFirst::getEdgeBandwidthUsage(int src, int dst, int time) {
     return bandwidthTime[time][src][dst];
 }
 
-
+void ValueFirst::result_input() {
+    for(int t = 0; t < totalTime; t++){
+        for(int i = 0; i < VertexNum; i++){
+            for(int j = 0; j < VertexNum; j++){
+                result.volPerTimeEdge[t][graph.getEdgeIndex(pair<int, int>(i, j))] = getEdgeBandwidthUsage(i, j, t);
+            }
+        }
+    }
+    result.runTime = (clock() - startTime) * 1.0 / CLOCKS_PER_SEC;
+}
 

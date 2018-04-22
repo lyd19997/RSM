@@ -4,6 +4,7 @@
 #include "graph.h"
 #include "requestList.h"
 #include "const.h"
+#include "result.h"
 
 using namespace std;
 
@@ -14,10 +15,11 @@ public:
 
     FlowBase(const char *gFilename, int time, RequestList requests_);
 
+    clock_t startTime ;
     int VertexNum;
     int EdgeNum;
     int totalTime;
-    int bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
+    double bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
     vector<vector<int>> VaReqPath;//x_i,j
 
 //    int bandwidthSrcToDst[MaxVertexNum][MaxVertexNum];//c_e
@@ -31,6 +33,9 @@ public:
     int final_bandwidth[MaxVertexNum][MaxVertexNum];//记录最终rounding之后的每条边的带宽
 
     RequestList requests;
+    Result result;
+
+    void result_input();
 
 
     void VaReqPath_init();
@@ -47,7 +52,7 @@ public:
 
     void printResult();
 
-    int getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
+    double getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
 };
 
 

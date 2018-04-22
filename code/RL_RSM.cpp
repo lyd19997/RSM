@@ -4,7 +4,8 @@
 
 #include "RL_RSM.h"
 
-MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), model(*env) {
+MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), model(*env) , result(){
+	startTime = clock();
 	VertexNum = graph.getVertexNum();
 	EdgeNum = graph.getEdgeNum();
 	totalTime = PEROID;
@@ -21,6 +22,9 @@ MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), mod
 			}
 		}
 	}
+	result.requestNum = requests.size();
+	result.receiveNum = requests.size();
+	result.algName = "MAA";
 	PrReqPath_init();
 	bandwidthSrcToDst_init();
 	iReqPathEdge_init();
@@ -31,11 +35,13 @@ MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), mod
 	bandwidthTime_init();
 	bandwidthRounding();
 	printResult();
+	input_result();
 }
 
 
 
-MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), model(*env) {
+MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), model(*env) ,result(){
+	startTime = clock();
 	VertexNum = graph.getVertexNum();
 	EdgeNum = graph.getEdgeNum();
 	totalTime = time;
@@ -52,6 +58,9 @@ MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilenam
 			}
 		}
 	}
+	result.requestNum = requests.size();
+	result.receiveNum = requests.size();
+	result.algName = "MAA";
 	PrReqPath_init();
 	bandwidthSrcToDst_init();
 	iReqPathEdge_init();
@@ -62,9 +71,11 @@ MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilenam
 	bandwidthTime_init();
 	bandwidthRounding();
 	printResult();
+	input_result();
 }
 
-MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), model(*env) {
+MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), model(*env), result() {
+	startTime = clock();
 	VertexNum = vNum;
 	EdgeNum = eNum;
 	totalTime = time;
@@ -81,6 +92,9 @@ MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum)
 			}
 		}
 	}
+	result.requestNum = requests.size();
+	result.receiveNum = requests.size();
+	result.algName = "MAA";
 	PrReqPath_init();
 	bandwidthSrcToDst_init();
 	iReqPathEdge_init();
@@ -91,6 +105,7 @@ MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum)
 	bandwidthTime_init();
 	bandwidthRounding();
 	printResult();
+	input_result();
 }
 
 bool MAA::linearSolver() {
@@ -230,6 +245,7 @@ void MAA::bandwidthRounding() {
 				}
 			}
 			final_bandwidth[s][d] = maxBand;
+			result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int (maxBand + 0.5);
 		}
 	}
 }
@@ -273,6 +289,17 @@ void MAA::bandwidthTime_init() {
 			}
 		}
 	}
+}
+
+void MAA::input_result() {
+	for(int t = 0; t < totalTime; t++){
+		for(int i = 0; i < VertexNum; i++){
+			for(int j = 0; j < VertexNum; j++){
+				result.volPerTimeEdge[t][graph.getEdgeIndex(pair<int, int>(i, j))] = getEdgeBandwidthUsage(i, j, t);
+			}
+		}
+	}
+	result.runTime = double((clock() - startTime) / CLOCKS_PER_SEC);
 }
 
 

@@ -6,6 +6,7 @@
 #include "requestList.h"
 #include "algorithm"
 #include <climits>
+#include "result.h"
 #include "const.h"
 
 using namespace std;
@@ -23,10 +24,13 @@ public:
 
     int VertexNum;
     int totalTime;
+
+    clock_t startTime ;
     double bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
 
     RequestList requests;
     Graph graph;
+    Result result;
 
     vector<vector<int>> final_path;
     int final_bandwidth[MaxVertexNum][MaxVertexNum];//记录最终rounding之后的每条边的带宽
@@ -43,6 +47,7 @@ public:
     void printResult();
 
     double getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
+    void result_input();
 };
 
 

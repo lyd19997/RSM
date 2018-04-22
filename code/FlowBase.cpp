@@ -4,7 +4,8 @@
 
 #include "FlowBase.h"
 
-FlowBase::FlowBase(Graph &topo, RequestList &requests) : graph(topo), requests(requests){
+FlowBase::FlowBase(Graph &topo, RequestList &requests) : graph(topo), requests(requests), result(){
+    startTime = clock();
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();
     totalTime = PEROID;
@@ -20,15 +21,20 @@ FlowBase::FlowBase(Graph &topo, RequestList &requests) : graph(topo), requests(r
             }
         }
     }
+    result.requestNum = requests.size();
+    result.receiveNum = requests.size();
+    result.algName = "FlowBase";
     VaReqPath_init();
     iReqPathEdge_init();
     pathSelecting();
     bandwidthTime_init();
     bandwidthCal();
     printResult();
+    result_input();
 }
 
-FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_){
+FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), result(){
+    startTime = clock();
     VertexNum = vNum;
     EdgeNum = eNum;
     totalTime = time;
@@ -44,15 +50,20 @@ FlowBase::FlowBase(int vNum, int eNum, int time, RequestList requests_) :graph(v
             }
         }
     }
+    result.requestNum = requests.size();
+    result.receiveNum = requests.size();
+    result.algName = "FlowBase";
     VaReqPath_init();
     iReqPathEdge_init();
     pathSelecting();
     bandwidthTime_init();
     bandwidthCal();
     printResult();
+    result_input();
 }
 
-FlowBase::FlowBase(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_){
+FlowBase::FlowBase(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), result(){
+    startTime = clock();
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();
     totalTime = time;
@@ -68,12 +79,16 @@ FlowBase::FlowBase(const char* gFilename, int time, RequestList requests_) :grap
             }
         }
     }
+    result.requestNum = requests.size();
+    result.receiveNum = requests.size();
+    result.algName = "FlowBase";
     VaReqPath_init();
     iReqPathEdge_init();
     pathSelecting();
     bandwidthTime_init();
     bandwidthCal();
     printResult();
+    result_input();
 }
 
 void FlowBase::VaReqPath_init() {
@@ -143,6 +158,7 @@ void FlowBase::pathSelecting() {
         }
         vector<int> path(paths[index]);
         final_path.push_back(path);
+        result.passPathIndex[i]=index;
         printf("path for request#%d: ", i);
         for(int j = 0; j < path.size(); j++){
             printf("%d->", path[j]);
@@ -154,13 +170,14 @@ void FlowBase::pathSelecting() {
 void FlowBase::bandwidthCal() {
     for(int s = 0; s < VertexNum; s++){
         for(int d = 0; d < VertexNum; d++){
-            int maxBand = 0;
+            double maxBand = 0;
             for(int t = 0; t < totalTime; t++){
                 if (bandwidthTime[t][s][d] > maxBand){
                     maxBand = bandwidthTime[t][s][d];
                 }
             }
-            final_bandwidth[s][d] = maxBand;
+            final_bandwidth[s][d] = int (maxBand + 0.5);
+            result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int (maxBand + 0.5);
         }
     }
 }
@@ -188,10 +205,22 @@ void FlowBase::printResult() {
             cost += final_bandwidth[i][j] * graph.BandwidthPrice[i][j];
         }
     }
+    result.cost = cost;
     printf("%d\n", cost);
 }
 
-int FlowBase::getEdgeBandwidthUsage(int src, int dst, int time) {
+double FlowBase::getEdgeBandwidthUsage(int src, int dst, int time) {
     return bandwidthTime[time][src][dst];
+}
+
+void FlowBase::result_input() {
+    for(int t = 0; t < totalTime; t++){
+        for(int i = 0; i < VertexNum; i++){
+            for(int j = 0; j < VertexNum; j++){
+                result.volPerTimeEdge[t][graph.getEdgeIndex(pair<int, int>(i, j))] = getEdgeBandwidthUsage(i, j, t);
+            }
+        }
+    }
+    result.runTime = (clock() - startTime) * 1.0 / CLOCKS_PER_SEC;
 }
 

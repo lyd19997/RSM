@@ -8,6 +8,7 @@
 #include "gurobi_c++.h"
 #include "cstdio"
 #include "const.h"
+#include "result.h"
 //#include "stdlib.h"
 
 
@@ -44,6 +45,8 @@ public:
 	int final_bandwidth[MaxVertexNum][MaxVertexNum];//记录最终rounding之后的每条边的带宽
 
 	RequestList requests;
+	Result result;
+	clock_t startTime;
 
 	void PrReqPath_init();
 	void bandwidthSrcToDst_init();
@@ -57,6 +60,7 @@ public:
 	void printResult();
 
 	void bandwidthTime_init();
+	void input_result()
 
 	int getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
 };
