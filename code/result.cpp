@@ -43,7 +43,7 @@ void Result::outResult() {
 //Graph topo;
 //RequestList requests;
 //string algName;
-//double runTime;//Ëã·¨ÔËÐÐÊ±¼ä £¨ms£© (clock() - startTime)*1.0 / CLOCKS_PER_SEC
+//double runTime;//ï¿½ã·¨ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ ï¿½ï¿½msï¿½ï¿½ (clock() - startTime)*1.0 / CLOCKS_PER_SEC
 //vector<vector<double> > volPerTimeEdge;
 //vector<int> peakPerEdge;
 //vector<int> passPathIndex;

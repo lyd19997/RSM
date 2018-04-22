@@ -156,7 +156,7 @@ int Graph::getVertexNum() {
 }
 
 int Graph::getEdgeNum() {
-	return EdgeNum;
+	return EdgeNum * 2;
 }
 
 void Graph::printGraph() {
