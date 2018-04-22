@@ -14,8 +14,8 @@ Graph::Graph(const char *filename) {
 		for (int j = 0; j < VertexNum; j++) {
 			G[i][j] = false;
 			Bandwidth[i][j] = 0;
-			BandwidthLim[i][j] = BANDWIDTH_CAPACITY;
-			BandwidthPrice[i][j] = MaxBandwidthPrice;
+			BandwidthLim[i][j] = Capacity[rand() % RANDNUM];
+			BandwidthPrice[i][j] = Prices[rand() % RANDNUM];
 		}
 	}
 	for (int i = 0; i < EdgeNum; i++) {
@@ -39,8 +39,8 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 		for (int j = 0; j < VertexNum; j++) {
 			G[i][j] = false;
 			Bandwidth[i][j] = 0;
-			BandwidthPrice[i][j] = MaxBandwidthPrice;
-			BandwidthLim[i][j] = BANDWIDTH_CAPACITY;//----
+            BandwidthLim[i][j] = Capacity[rand() % RANDNUM];
+            BandwidthPrice[i][j] = Prices[rand() % RANDNUM];
 		}
 	}
 	vector<int> connected, unconnected;
