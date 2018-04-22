@@ -245,8 +245,12 @@ void MAA::bandwidthRounding() {
 					maxBand = bandwidthTime[t][s][d];
 				}
 			}
-			final_bandwidth[s][d] = int (maxBand + 0.5);
-			result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int (maxBand + 0.5);
+
+			if(graph.G[s][d]){
+                final_bandwidth[s][d] = int (maxBand + 0.5);
+                result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int (maxBand + 0.5);
+			}
+
 		}
 	}
 }
