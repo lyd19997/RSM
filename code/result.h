@@ -7,8 +7,8 @@ class Result {
 public:
 	int requestNum;
 	int receiveNum;
-	int income;
-	int cost;
+	int income = 0;
+	int cost = 0;
 	Graph topo;
 	RequestList requests;
 	string algName;

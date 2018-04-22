@@ -160,6 +160,7 @@ void MinCost::printResult() {
             cost += final_bandwidth[i][j] * graph.BandwidthPrice[i][j];
         }
     }
+    result.cost = cost;
     printf("%d\n", cost);
 }
 

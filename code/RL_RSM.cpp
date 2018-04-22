@@ -230,6 +230,7 @@ void MAA::pathSelecting() {
 		printf("chose %d\n", index);
 		vector<int> path(paths[index]);
 		final_path.push_back(path);
+		result.passPathIndex[i] = index;
 	}
 
 }
@@ -238,7 +239,7 @@ void MAA::bandwidthRounding() {
 
 	for (int s = 0; s < VertexNum; s++) {
 		for (int d = 0; d < VertexNum; d++) {
-			int maxBand = 0;
+			double maxBand = 0;
 			for (int t = 0; t < totalTime; t++) {
 				if (bandwidthTime[t][s][d] > maxBand) {
 					maxBand = bandwidthTime[t][s][d];
@@ -273,6 +274,7 @@ void MAA::printResult() {
 			cost += final_bandwidth[i][j] * graph.BandwidthPrice[i][j];
 		}
 	}
+	result.cost = cost;
     printf("%d\n", cost);
 }
 
@@ -299,7 +301,7 @@ void MAA::input_result() {
 			}
 		}
 	}
-	result.runTime = double((clock() - startTime) / CLOCKS_PER_SEC);
+	result.runTime = (clock() - startTime) * 1.0 / CLOCKS_PER_SEC;
 }
 
 

@@ -26,7 +26,7 @@ public:
 	int VertexNum;
 	int EdgeNum;
 	int totalTime;
-	int bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
+	double bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
 	long int requestsNum;
 	GRBEnv* env = new GRBEnv();
 	GRBModel model;
