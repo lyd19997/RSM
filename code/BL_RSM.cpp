@@ -78,7 +78,7 @@ vector<int> Blrsm::TAA() {
 }
 
 double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
-	double res = 0;
+	double res_ = 0;
 	double Fbound = Fs*(1 - delta[0]);
 	double gotValue = 0;
 	for (int i = 0; i < deep; ++i)
@@ -94,7 +94,8 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 			sumPr += Pr_ij[i][j];
 		prod *= sumPr*powl(1 + delta[0], -1 * requests[i].value) + 1 - sumPr;
 	}
-	res += powl(1 + delta[0], Fbound - gotValue)*prod;
+	res_ += powl(1 + delta[0], Fbound - gotValue)*prod;
+	cout << res_ << endl;//debug
 	//---------------------------------------------------------
 	for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][N]
 	{
@@ -112,10 +113,11 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 					sumDelta += Pr_ij[i][j] * powl(1 + delta[k%topo.getEdgeNum()], requests[i].rate) - Pr_ij[i][j];
 			prod *= sumDelta;
 		}
-		res += powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
+		res_ += powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
+		cout << prod << " " << powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) << endl;
 	}
 
-	return res;
+	return res_;
 }
 
 vector<vector<double> > Blrsm::relaxation_LP() {
