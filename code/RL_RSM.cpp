@@ -245,9 +245,11 @@ void MAA::bandwidthRounding() {
 					maxBand = bandwidthTime[t][s][d];
 				}
 			}
-			final_bandwidth[s][d] = int (maxBand + 0.5);
-			cout << graph.getEdgeIndex(pair<int, int>(s, d)) << endl;
-			result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int (maxBand + 0.5);
+
+			if(graph.G[s][d]){
+                final_bandwidth[s][d] = int (maxBand + 0.5);
+                result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int (maxBand + 0.5);
+			}
 		}
 	}
 }
@@ -298,7 +300,8 @@ void MAA::input_result() {
 	for(int t = 0; t < totalTime; t++){
 		for(int i = 0; i < VertexNum; i++){
 			for(int j = 0; j < VertexNum; j++){
-				result.volPerTimeEdge[t][graph.getEdgeIndex(pair<int, int>(i, j))] = getEdgeBandwidthUsage(i, j, t);
+				if (graph.getEdgeIndex(pair<int, int>(i, j)) != -1)
+					result.volPerTimeEdge[t][graph.getEdgeIndex(pair<int, int>(i, j))] = getEdgeBandwidthUsage(i, j, t);
 			}
 		}
 	}

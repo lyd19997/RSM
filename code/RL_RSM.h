@@ -35,7 +35,7 @@ public:
 
 	GRBVar bandwidthSrcToDst[MaxVertexNum][MaxVertexNum];//c_e
 
-	GRBQuadExpr B = 0;
+	GRBLinExpr B = 0;
 
 	vector<vector<vector<vector<int>>>> iReqPathEdge; //I_i,j,e
 
