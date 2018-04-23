@@ -11,11 +11,11 @@ class Blrsm {
 public:
 	void schedule();
 	Blrsm(Graph &topo, RequestList &requests);
-
+	Result res;
 private:
 	Graph &topo;
 	RequestList &requests;
-	Result res;
+	
 	vector<int> TAA();
 	vector<vector<double> > Pr_ij;
 	vector<double> delta;

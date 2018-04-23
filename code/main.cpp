@@ -4,6 +4,8 @@
 #include "FlowBase.h"
 #include "MinCost.h"
 #include "ValueFirst.h"
+#include"Amoeba.h"
+#include"RSM_greedy.h"
 #include <time.h>
 
 
@@ -12,19 +14,27 @@ int main() {
 	srand((unsigned)time(0));
 	RequestList requests(VERTEXSIZE);
 	Graph topo(VERTEXSIZE, EDGESIZE);
-//	Blrsm alg(topo, requests);
-//	alg.TAA();
-    printf("MAA\n");
-	// MAA maa(VERTEXSIZE, EDGESIZE, PEROID, requests);
-	MAA maa(topo, requests);
-	printf("flowbase\n");
-//	FlowBase fb(topo, requests);
-//   // FlowBase fb(VERTEXSIZE, EDGESIZE, PEROID, requests);
-//    printf("min cost\n");
-//    MinCost mc(topo, requests);
-////    MinCost mc(VERTEXSIZE, EDGESIZE, PEROID, requests);
-//	//...
-//	printf("value first\n");
-//	ValueFirst vf(topo, requests);
+	//-------RL-SRM---------
+	//opt
+	//MAA alg(topo, requests);
+	//FlowBase alg(topo, requests);
+	//MinCost alg(topo, requests);
+
+
+	//-------BL-RSM---------
+	//opt
+	Blrsm alg(topo, requests);  
+	
+	//Amoeba alg(topo, requests);   
+	//ValueFirst alg(topo, requests);
+
+
+	//----------------------
+	//opt
+	//alg
+	//RsmGreedy alg(topo, requests);  
+	alg.schedule();
+	alg.res.outResult();
+	
 	return 0;
 }

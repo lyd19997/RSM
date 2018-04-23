@@ -13,7 +13,7 @@ void RsmGreedy::schedule() {
 		for (int i = 0; i < requests.size(); ++i)
 		{
 			if (passPathIndex[i] == -1)
-				pushInPath(i), flag = 1;
+				 flag |= pushInPath(i);
 		}
 	}
 	resOut();
@@ -30,7 +30,8 @@ bool RsmGreedy::pushInPath(int indexReq) {
 		vector<vector<double> > preAllocateVol(volPerTimeEdge);
 		for (int t = requests[indexReq].start; t <= requests[indexReq].end; ++t)
 		{
-			for (vector<int>::iterator it = topo.getPath(requests[indexReq].getSrcDst(), i).begin(); it != topo.getPath(requests[indexReq].getSrcDst(), i).begin(); ++it)
+			vector<int> edgeList = topo.getPath(requests[indexReq].getSrcDst(), i);
+			for (vector<int>::iterator it = edgeList.begin(); it != edgeList.end(); ++it)
 				preAllocateVol[t][*it] += requests[indexReq].rate;
 		}
 		vector<int> peak(peakPerEdge);
@@ -58,7 +59,7 @@ bool RsmGreedy::pushInPath(int indexReq) {
 	return 0;
 }
 
-void RsmGreedy::resOut() {//--
+void RsmGreedy::resOut() {
 	res.algName = "RsmGreedy";
 	res.cost = 0;
 	res.income = 0;
@@ -66,16 +67,10 @@ void RsmGreedy::resOut() {//--
 	for (int i = 0; i < requests.size(); ++i)
 		res.income += (passPathIndex[i] == -1 ? 0 : requests[i].value), res.receiveNum += 1;
 	res.passPathIndex = passPathIndex;
-	for (int e = 0; e < topo.getEdgeNum(); ++e)
-		res.peakPerEdge[e] = topo.linkCapacity(e);
+	res.peakPerEdge = peakPerEdge;
+	for (int i = 0; i < peakPerEdge.size(); ++i)
+		res.cost += topo.getPrice(i)*peakPerEdge[i];
 	res.requestNum = requests.size();
 	res.getRunTime();
-	for (vector<Request>::iterator it = requests.begin(); it != requests.end(); ++it)
-	{
-		for (vector<int>::iterator ite = topo.getPath(it->getSrcDst(), passPathIndex[it - requests.begin()]).begin(); ite != topo.getPath(it->getSrcDst(), passPathIndex[it - requests.begin()]).end(); ++ite)
-		{
-			for (int t = it->start; t <= it->end; ++t)
-				res.volPerTimeEdge[t][*ite] += it->rate;
-		}
-	}
+	res.volPerTimeEdge = volPerTimeEdge;
 }
