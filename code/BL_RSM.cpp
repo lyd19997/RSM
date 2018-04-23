@@ -38,6 +38,8 @@ vector<int> Blrsm::TAA() {
 		Pr_ij.push_back(vector<double>(x_ij[i].size(), 0));
 		for (int j = 0; j < x_ij[i].size(); ++j) 
 		{
+			cout << j << "  " << topo.pathSize(requests[i].getSrcDst()) << endl;//debug
+			cout << topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j) << endl; //·µ»Ø-1£¿
 			Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j)];//...pathCapacityEdgeIndex
 			Fs += Pr_ij.back()[j] * requests[i].value;
 		}
@@ -59,19 +61,17 @@ vector<int> Blrsm::TAA() {
 	//--
 	for (int i = 0; i < requests.size(); ++i)
 	{
-		double PrMin = 1; // PrMin > 1
+		double PrMin = 2; // PrMin > 1
 		int pathMinPr = -2;
 		for (int j = -1; j < topo.pathSize(requests[i].getSrcDst()); ++j) // j == -1 
 		{
-			if (j >= 0 && x_ij[i][j] == 0) continue;
-			double upperBound = PrUpperBound(i, resX, j);
-			if (PrMin > upperBound&&upperBound > 0)
+			if (PrMin > PrUpperBound(i, resX, j))
 			{
-				PrMin = upperBound;
+				PrMin = PrUpperBound(i, resX, j);
 				pathMinPr = j;
 			}
 		}
-		if (pathMinPr == -2) { cout << i << "  Wa pathMinPr == -2" << endl; while (1); }//debug
+		if (pathMinPr == -2) { cout << "Wa pathMinPr == -2" << endl; while (1); }//debug
 		resX[i] = pathMinPr;
 	}
 	return resX;
@@ -101,27 +101,33 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 	{
 		double sumCapacity = 0;
 		for (int i = 0; i < deep; ++i)
-			if ((k / topo.getEdgeNum() <= requests[i].end&&k / topo.getEdgeNum() >= requests[i].start) && resX[i] >= 0 && topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), resX[i]))
-				sumCapacity += requests[i].rate;
-
+			sumCapacity += requests[i].rate*((k / topo.getEdgeNum()<requests[i].start || k / topo.getEdgeNum()>requests[i].end) ? 0 : 1)
+				*(resX[i] < 0 ? 0 : 1)
+				*topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), resX[i]);
+		
 		prod = 1;
 		for (int i = deep; i < requests.size(); ++i)
 		{
 			double sumDelta = 1;
 			for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
-				if (k / topo.getEdgeNum() >= requests[i].start&&k / topo.getEdgeNum() <= requests[i].end&&topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j))
-					sumDelta += Pr_ij[i][j] * powl(1 + delta[k%topo.getEdgeNum()], requests[i].rate) - Pr_ij[i][j];
+				sumDelta += Pr_ij[i][j] * powl(1 + delta[k], requests[i].rate
+					*((k / topo.getEdgeNum()<requests[i].start || k / topo.getEdgeNum()>requests[i].end) ? 0 : 1)
+					*topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j)) - Pr_ij[i][j];
 			prod *= sumDelta;
 		}
+<<<<<<< HEAD
 		res_ += powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
 		cout << prod << " " << powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) << endl;
+=======
+		res += powl(1 + delta[k], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
+>>>>>>> 5779e879039f20920ba123b5f19beeb70015ad29
 	}
 
 	return res_;
 }
 
 vector<vector<double> > Blrsm::relaxation_LP() {
-	vector<vector<double> > res_; res_.clear();
+	vector<vector<double> > res; res.clear();
 	vector<int> addr(1, 0);
 	for (vector<Request>::iterator it = requests.begin(); it != requests.end(); ++it)
 		addr.push_back(addr.back() + topo.pathSize(it->getSrcDst()));
@@ -136,39 +142,20 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 				lhsExpr += xReqPath[j];
 			model.addConstr(lhsExpr, GRB_LESS_EQUAL, 1); // constrain 1
 		}
-		//for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][E]
-		//{
-		//	GRBLinExpr lhsExpr = 0;
-		//	for (int i = 0; i < requests.size(); ++i)
-		//	{
-		//		for (int j = addr[i]; j < addr[i + 1]; ++j)
-		//			if ((k / topo.getEdgeNum() >= requests[i].start && k / topo.getEdgeNum() <= requests[i].end) && topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j))
-		//				//cout <<"linkInpath  "<< topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j) << endl;//debug
-		//				lhsExpr += requests[i].rate*xReqPath[j];
-		//	}
-		//	cout << topo.linkCapacity(k%topo.getEdgeNum()) << std::endl;//debug
-		//	model.addConstr(lhsExpr, GRB_LESS_EQUAL, topo.linkCapacity(k%topo.getEdgeNum())); // constrain 2
-		//}
-		for (int t = 0; t < PEROID; ++t)
+		for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][E]
 		{
-			for (int e = 0; e < topo.getEdgeNum(); ++e)
+			GRBLinExpr lhsExpr = 0;
+			for (int i = 0; i < requests.size(); ++i)
 			{
-				GRBLinExpr lhsExpr = 0;
-				for (int i = 0; i < requests.size(); ++i)
-				{
-					for (int j = addr[i]; j < addr[i + 1]; ++j)
+				for (int j = addr[i]; j < addr[i + 1]; ++j)
+					if (((k / topo.getEdgeNum() < requests[i].start || k / topo.getEdgeNum() > requests[i].end) ? 0 : 1) && topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j))
 					{
-						//debug
-						//cout <<i<<"   "<< j-addr[i] << "   " << topo.pathSize(requests[i].getSrcDst()) << endl;
-						//vector<int> edgeList = topo.getPath(requests[i].getSrcDst(), j - addr[i]);
-						//cout << edgeList.size() << "  " << topo.findSrcDst(e).first << "-" << topo.findSrcDst(e).second << endl;
-						//--
-						if (t <= requests[i].end&&t >= requests[i].start&&topo.linkInPath(e, requests[i].getSrcDst(), j - addr[i]))
-							lhsExpr += xReqPath[j] * requests[i].rate;
+						cout <<"linkInpath  "<< topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j) << endl;//debug
+						lhsExpr += requests[i].rate*xReqPath[j];
 					}
-				}
-				model.addConstr(lhsExpr, GRB_LESS_EQUAL, topo.linkCapacity(e)); // constrain 2
 			}
+			//cout << topo.linkCapacity(k%topo.getEdgeNum()) << std::endl;//debug
+			model.addConstr(lhsExpr, GRB_LESS_EQUAL, topo.linkCapacity(k%topo.getEdgeNum())); // constrain 2
 		}
 		GRBLinExpr obj = 0;
 		for (int i = 0; i < requests.size(); ++i)
@@ -182,20 +169,20 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 		{
 			for (int i = 0; i < requests.size(); ++i)
 			{
-				res_.push_back(vector<double>());
+				res.push_back(vector<double>());
 				for (int j = addr[i]; j < addr[i + 1]; ++j)
-					res_.back().push_back(xReqPath[j].get(GRB_DoubleAttr_X));
+					res.back().push_back(xReqPath[j].get(GRB_DoubleAttr_X));
 			}
 		}
 	}
 	catch (...) {
 		
 	}
-	if (res_.empty() && requests.size()) {
+	if (res.empty() && requests.size()) {
 		cout << "LP error" << endl;
 		while (1);
 	}
-	return res_;
+	return res;
 }
 
 void Blrsm::outRes() {

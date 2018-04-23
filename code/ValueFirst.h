@@ -18,7 +18,7 @@ public:
     int VertexNum;
     int EdgeNum;
     int totalTime;
-    double bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
+    double bandwidthTime[MaxTime][VERTEXSIZE][VERTEXSIZE];//记录每个时间每条边上带宽的使用
 
     Graph graph;
     RequestList requests;

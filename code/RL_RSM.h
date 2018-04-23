@@ -26,14 +26,14 @@ public:
 	int VertexNum;
 	int EdgeNum;
 	int totalTime;
-	double bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
+	double bandwidthTime[MaxTime][VERTEXSIZE][VERTEXSIZE];//记录每个时间每条边上带宽的使用
 	long int requestsNum;
 	GRBEnv* env = new GRBEnv();
 	GRBModel model;
 
 	vector<vector<GRBVar>> PrReqPath;//x_i,j
 
-	GRBVar bandwidthSrcToDst[MaxVertexNum][MaxVertexNum];//c_e
+	GRBVar bandwidthSrcToDst[VERTEXSIZE][VERTEXSIZE];//c_e
 
 	GRBLinExpr B = 0;
 
@@ -42,7 +42,7 @@ public:
 	Graph graph;
 
 	vector<vector<int>> final_path;
-	int final_bandwidth[MaxVertexNum][MaxVertexNum];//记录最终rounding之后的每条边的带宽
+	int final_bandwidth[VERTEXSIZE][VERTEXSIZE];//记录最终rounding之后的每条边的带宽
 
 	RequestList requests;
 	Result result;

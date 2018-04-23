@@ -18,8 +18,8 @@
 #define MaxTime 50
 //-------request---------
 #define MIN_DURATION 10
-#define LAMBDA 10
-#define MEAN_TRANSFER_SIZE 10
+#define LAMBDA 5
+#define MEAN_TRANSFER_SIZE 5
 #define MEAN_VALUE 500
 //--------topo---------
 #define VERTEXSIZE 19//10

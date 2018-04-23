@@ -26,15 +26,15 @@ public:
     int totalTime;
 
     clock_t startTime ;
-    double bandwidthTime[MaxTime][MaxVertexNum][MaxVertexNum];//记录每个时间每条边上带宽的使用
+    double bandwidthTime[MaxTime][VERTEXSIZE][VERTEXSIZE];//记录每个时间每条边上带宽的使用
 
     RequestList requests;
     Graph graph;
     Result result;
 
     vector<vector<int>> final_path;
-    int final_bandwidth[MaxVertexNum][MaxVertexNum];//记录最终rounding之后的每条边的带宽
-    double peekBandwidth[MaxVertexNum][MaxVertexNum];//记录峰值带宽
+    int final_bandwidth[VERTEXSIZE][VERTEXSIZE];//记录最终rounding之后的每条边的带宽
+    double peekBandwidth[VERTEXSIZE][VERTEXSIZE];//记录峰值带宽
 
     void peekBandwidth_init();
 

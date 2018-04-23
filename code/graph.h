@@ -19,10 +19,10 @@ public:
 	int EdgeNum;
 	const int Prices[RANDNUM] = { 4, 6, 14, 28, 68, 85, 37, 20 };
 	const int Capacity[RANDNUM] = { 50, 47, 41, 32, 69, 57, 73, 37 };
-	bool G[MaxVertexNum][MaxVertexNum];
-	double Bandwidth[MaxVertexNum][MaxVertexNum];
-	int BandwidthLim[MaxVertexNum][MaxVertexNum];//每条边的最大容量限定
-	int BandwidthPrice[MaxVertexNum][MaxVertexNum];
+	bool G[VERTEXSIZE][VERTEXSIZE];
+	double Bandwidth[VERTEXSIZE][VERTEXSIZE];
+	int BandwidthLim[VERTEXSIZE][VERTEXSIZE];//每条边的最大容量限定
+	int BandwidthPrice[VERTEXSIZE][VERTEXSIZE];
 
 	int pair2EIndex[VERTEXSIZE][VERTEXSIZE];
 
@@ -30,7 +30,7 @@ public:
 
 	int getEdgeIndex(pair<int, int> srcDst);//得到的是有向边的编号
 
-	vector<vector<int>>Paths[MaxVertexNum][MaxVertexNum];
+	vector<vector<int>>Paths[VERTEXSIZE][VERTEXSIZE];
 
 	Graph(const char * filename);//从文件中生成图
 	Graph(int vertexNum, int edgeNum);//生成无向联通图
