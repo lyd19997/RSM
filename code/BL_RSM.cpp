@@ -53,12 +53,14 @@ vector<int> Blrsm::TAA() {
 	double left = 0, right = 1;
 	double mid = (left + right) / 2;
 	double bound = -1 * log(topo.getEdgeNum() + 1) / Fs;//¾«¶È
+	cout << DELTA0(1) << endl;//debug
 	while ((bound - DELTA0(mid) > EPS || bound < DELTA0(mid)) && !(cnt--<0 && bound>DELTA0(mid))) {
 		if (bound < DELTA0(mid))
 			left = mid;
 		else
 			right = mid;
 		mid = (right + left) / 2;
+		cout << cnt << endl;//debug
 	}
 	delta[0] = mid;
 	//--
@@ -143,20 +145,25 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 				lhsExpr += xReqPath[j];
 			model.addConstr(lhsExpr, GRB_LESS_EQUAL, 1); // constrain 1
 		}
-		for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][E]
+		for (int t = 0; t < PEROID; ++t)
 		{
-			GRBLinExpr lhsExpr = 0;
-			for (int i = 0; i < requests.size(); ++i)
+			for (int e = 0; e < topo.getEdgeNum(); ++e)
 			{
-				for (int j = addr[i]; j < addr[i + 1]; ++j)
-					if (((k / topo.getEdgeNum() < requests[i].start || k / topo.getEdgeNum() > requests[i].end) ? 0 : 1) && topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j - addr[i]))
-					{
-						//cout <<"linkInpath  "<< topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j) << endl;//debug
-						lhsExpr += requests[i].rate*xReqPath[j];
-					}
+				GRBLinExpr lhsExpr = 0;
+				for (int i = 0; i < requests.size(); ++i)
+				{
+					for (int j = addr[i]; j < addr[i + 1]; ++j)
+						if (!(t < requests[i].start || t > requests[i].end) && topo.linkInPath(e, requests[i].getSrcDst(), j - addr[i]))
+						{
+							if (topo.findSrcDst(e) == pair<int, int>(0, 6))
+								cout << i << "  " << topo.findSrcDst(e).first << "--" << topo.findSrcDst(e).second << "  "
+								<< " linkInpath  " << j - addr[i] << "  " << topo.linkInPath(e, requests[i].getSrcDst(), j - addr[i]) << endl;//debug
+							lhsExpr += requests[i].rate*xReqPath[j];
+						}
+				}
+				//cout << topo.linkCapacity(k%topo.getEdgeNum()) << std::endl;//debug
+				model.addConstr(lhsExpr, GRB_LESS_EQUAL, topo.linkCapacity(e)); // constrain 2
 			}
-			//cout << topo.linkCapacity(k%topo.getEdgeNum()) << std::endl;//debug
-			model.addConstr(lhsExpr, GRB_LESS_EQUAL, topo.linkCapacity(k%topo.getEdgeNum())); // constrain 2
 		}
 		GRBLinExpr obj = 0;
 		for (int i = 0; i < requests.size(); ++i)
