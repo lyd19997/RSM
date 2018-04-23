@@ -228,7 +228,7 @@ bool Graph::linkInPath(int e_src, int e_dst, int src, int dst, int pathIndex) {
 	vector<int> path = Paths[src][dst][pathIndex];
 	for (int e_s = 0; e_s < path.size() - 1; e_s++) {
 		int e_d = e_s + 1;
-		if (e_s == e_src && e_d == e_dst) return true;
+		if (path[e_s] == e_src && path[e_d] == e_dst) return true;
 	}
 	return false;
 }
