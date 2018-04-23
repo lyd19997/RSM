@@ -14,17 +14,19 @@ Graph::Graph(const char *filename) {
 		for (int j = 0; j < VertexNum; j++) {
 			G[i][j] = false;
 			Bandwidth[i][j] = 0;
-			BandwidthLim[i][j] = Capacity[rand() % RANDNUM];
-			BandwidthPrice[i][j] = Prices[rand() % RANDNUM];
+			BandwidthLim[i][j] = 0;
+			BandwidthPrice[i][j] = 0;
 		}
 	}
 	for (int i = 0; i < EdgeNum; i++) {
-		int start, terminate, price;
-		fscanf(fp, "%d %d %d", &start, &terminate, &price);
+		int start, terminate, price, lim;
+		fscanf(fp, "%d %d %d %d", &start, &terminate, &price, lim);
 		G[start][terminate] = true;
 		BandwidthPrice[start][terminate] = price;
+		BandwidthLim[start][terminate] = lim;
         G[terminate][start] = true;
         BandwidthPrice[terminate][start] = price;
+        BandwidthLim[terminate][start] = lim;
 	}
 	pair2EIndex_init();
 	printGraph();
@@ -318,7 +320,7 @@ void Graph::outputGraph() {
     out << VertexNum << " " << EdgeNum << endl;
     for(int i = 0; i < VertexNum; i++ ){
         for(int j = i + 1; j < VertexNum; j++){
-            out << i << " " << j << " " << BandwidthPrice[i][j] << endl;
+            out << i << " " << j << " " << BandwidthPrice[i][j] << " "<< BandwidthLim[i][j] << endl;
         }
     }
     out.close();
