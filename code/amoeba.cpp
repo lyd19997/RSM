@@ -122,7 +122,8 @@ void Amoeba::outRes() {
 	res.income = 0;
 	res.receiveNum = 0;
 	for (int i = 0; i < requests.size(); ++i)
-		res.income += (passPathIndex[i] == -1 ? 0 : requests[i].value), res.receiveNum += 1;
+		if (passPathIndex[i] != -1)
+			res.income += requests[i].value, res.receiveNum += 1;
 	res.passPathIndex = passPathIndex;
 	for (int e = 0; e < topo.getEdgeNum(); ++e)
 		res.peakPerEdge[e] = topo.linkCapacity(e);

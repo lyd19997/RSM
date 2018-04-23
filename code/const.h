@@ -20,6 +20,7 @@
 #define MIN_DURATION 10
 #define LAMBDA 5
 #define MEAN_TRANSFER_SIZE 5
+#define MEAN_VALUE 500
 //--------topo---------
 #define VERTEXSIZE 19
 #define EDGESIZE 18
@@ -28,23 +29,21 @@
 #define MaxBandwidthPrice 10
 #define BANDWIDTH_CAPACITY 30
 //-------path--------------
-const std::string Path = ".\\data\\";
+const std::string Path = "C:\\data\\";
 
 const std::string GraphPath = Path + "Graph\\";
 const std::string RequestPath = Path + "Request\\";
 const std::string AlgorithmPath = Path + "Algorithm\\";
 
-const std::string GraphInPath = GraphPath + "Topo_node_" + std::to_string(VERTEXSIZE) + ".txt";
-const std::string GraphOutPath = GraphInPath;
+const std::string GraphPathIn = GraphPath + "Topo_node_" + std::to_string(VERTEXSIZE) + ".txt";
+const std::string GraphPathOut = GraphPathIn;
 
 const std::string RequestPathIn = RequestPath
 + "Topo_node_" + std::to_string(VERTEXSIZE)
 + "_Peroid_" + std::to_string(PEROID)
-+ "_lambda_" + std::to_string(LAMBDA) + "_Duration_" + std::to_string(MIN_DURATION) + std::to_string(MEAN_TRANSFER_SIZE) + "_TransferIn.txt";
-const std::string RequestPathOut = RequestPath;
-												
++ "_lambda_" + std::to_string(LAMBDA) + "_Duration_" + std::to_string(MIN_DURATION) + std::to_string(MEAN_TRANSFER_SIZE) + "_RequestIn.txt";
+const std::string RequestPathOut = RequestPathIn;
 
-const std::string OutPath = AlgorithmPath
-+ "\\Topo_node_" + std::to_string(VERTEXSIZE)
+const std::string OutPath = "_Topo_node_" + std::to_string(VERTEXSIZE)
 + "_Peroid_" + std::to_string(PEROID)
 + "_lambda_" + std::to_string(LAMBDA) + "_Duration_" + std::to_string(MIN_DURATION) + "_RequestSize_" + std::to_string(MEAN_TRANSFER_SIZE) + "_";

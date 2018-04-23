@@ -12,38 +12,32 @@ void Result::getRunTime() {
 }
 
 void Result::outResult() {
-	ofstream out(OutPath + algName + ".txt");
-	cout << requestNum << endl;
-	cout << receiveNum << endl;
-	cout << income << endl;
-	cout << cost << endl;
-	cout << algName << endl;
-	cout << runTime << endl;
-	cout << "--volPerTimeEdge--" << endl;
+	ofstream out(AlgorithmPath + algName + OutPath + ".txt");
+	out << algName << endl;
+	out << runTime << endl;
+	out << receiveNum << endl;
+	out << requestNum << endl;
+	
+	out << income << endl;
+	out << cost << endl;
+	
+	out << "--passPathIndex--" << endl;
+	for (vector<int>::iterator ite = passPathIndex.begin(); ite != passPathIndex.end(); ++ite)
+		out << *ite << " ";
+	out << endl;
+
+	out << "--peakPerEdge--" << endl;
+	for (vector<int>::iterator ite = peakPerEdge.begin(); ite != peakPerEdge.end(); ++ite)
+		out << *ite << " ";
+	out << endl;
+
+	out << "--volPerTimeEdge--" << endl;
 	for (vector<vector<double>>::iterator it = volPerTimeEdge.begin(); it != volPerTimeEdge.end(); ++it)
 	{
 		for (vector<double>::iterator ite = it->begin(); ite != it->end(); ++ite)
-			cout << *ite << " ";
-		cout << endl;
+			out << *ite << " ";
+		out << endl;
 	}
-	cout << "--peakPerEdge--" << endl;
-	for (vector<int>::iterator ite = peakPerEdge.begin(); ite != peakPerEdge.end(); ++ite)
-		cout << *ite << " ";
-	cout << endl;
-	cout << "--passPathIndex--" << endl;
-	for (vector<int>::iterator ite = passPathIndex.begin(); ite != passPathIndex.end(); ++ite)
-		cout << *ite << " ";
-	cout << endl;
 }
 
-//int requestNum;
-//int receiveNum;
-//int income;
-//int cost;
-//Graph topo;
-//RequestList requests;
-//string algName;
-//double runTime;//�㷨����ʱ�� ��ms�� (clock() - startTime)*1.0 / CLOCKS_PER_SEC
-//vector<vector<double> > volPerTimeEdge;
-//vector<int> peakPerEdge;
-//vector<int> passPathIndex;
+

@@ -46,12 +46,11 @@ RequestList::RequestList(int topoVertexSize) {
 			int pos = rand() % (topoVertexSize*(topoVertexSize - 1));
 			int src = pos / (topoVertexSize - 1);
 			int dst = pos % ((topoVertexSize - 1));
-			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, rand() % 10 + 1/*value*/, randomExponential(1.0)*MEAN_TRANSFER_SIZE));
+			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, randomExponential(1.0)*MEAN_VALUE, randomExponential(1.0)*MEAN_TRANSFER_SIZE));
 		}
 	}
 	ofstream out(RequestPathOut);
 	out << size() << endl;
-	out << id << endl;
 	for (vector<Request>::iterator it = begin(); it != end(); ++it) {
 		out << it->id << " " << it->src << " " << it->dst << " " << it->start << " " << it->end << " " << it->value << it->rate << endl;
 	}
