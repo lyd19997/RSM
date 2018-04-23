@@ -38,8 +38,8 @@ vector<int> Blrsm::TAA() {
 		Pr_ij.push_back(vector<double>(x_ij[i].size(), 0));
 		for (int j = 0; j < x_ij[i].size(); ++j) 
 		{
-			cout << j << "  " << topo.pathSize(requests[i].getSrcDst()) << endl;//debug
-			cout << topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j) << endl; //·µ»Ø-1£¿
+			//cout << j << "  " << topo.pathSize(requests[i].getSrcDst()) << endl;//debug
+			//cout << topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j) << endl; //·µ»Ø-1£¿
 			Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j)];//...pathCapacityEdgeIndex
 			Fs += Pr_ij.back()[j] * requests[i].value;
 		}
@@ -71,7 +71,7 @@ vector<int> Blrsm::TAA() {
 				pathMinPr = j;
 			}
 		}
-		if (pathMinPr == -2) { cout << "Wa pathMinPr == -2" << endl; while (1); }//debug
+		if (pathMinPr == -2) { cout << i << " Wa pathMinPr == -2" << endl; while (1); }//debug
 		resX[i] = pathMinPr;
 	}
 	return resX;
@@ -115,12 +115,8 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 					*topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j)) - Pr_ij[i][j];
 			prod *= sumDelta;
 		}
-<<<<<<< HEAD
 		res_ += powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
 		cout << prod << " " << powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) << endl;
-=======
-		res += powl(1 + delta[k], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
->>>>>>> 5779e879039f20920ba123b5f19beeb70015ad29
 	}
 
 	return res_;
@@ -148,9 +144,9 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 			for (int i = 0; i < requests.size(); ++i)
 			{
 				for (int j = addr[i]; j < addr[i + 1]; ++j)
-					if (((k / topo.getEdgeNum() < requests[i].start || k / topo.getEdgeNum() > requests[i].end) ? 0 : 1) && topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j))
+					if (((k / topo.getEdgeNum() < requests[i].start || k / topo.getEdgeNum() > requests[i].end) ? 0 : 1) && topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j - addr[i]))
 					{
-						cout <<"linkInpath  "<< topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j) << endl;//debug
+						//cout <<"linkInpath  "<< topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j) << endl;//debug
 						lhsExpr += requests[i].rate*xReqPath[j];
 					}
 			}

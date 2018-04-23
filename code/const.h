@@ -20,10 +20,10 @@
 #define MIN_DURATION 10
 #define LAMBDA 5
 #define MEAN_TRANSFER_SIZE 5
-#define MEAN_VALUE 500
+#define MEAN_VALUE 1
 //--------topo---------
-#define VERTEXSIZE 19//10
-#define EDGESIZE 18//14
+#define VERTEXSIZE 10
+#define EDGESIZE 14
 #define MaxVertexNum 30
 #define MaxBandwidth 3000
 #define MaxBandwidthPrice 10
