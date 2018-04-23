@@ -20,7 +20,7 @@ Graph::Graph(const char *filename) {
 	}
 	for (int i = 0; i < EdgeNum; i++) {
 		int start, terminate, price, lim;
-		fscanf(fp, "%d %d %d %d", &start, &terminate, &price, lim);
+		fscanf(fp, "%d %d %d %d", &start, &terminate, &price, &lim);
 		G[start][terminate] = true;
 		BandwidthPrice[start][terminate] = price;
 		BandwidthLim[start][terminate] = lim;
