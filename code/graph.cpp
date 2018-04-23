@@ -29,10 +29,10 @@ Graph::Graph(const char *filename) {
         BandwidthLim[terminate][start] = lim;
 	}
 	pair2EIndex_init();
-	printGraph();
+	//printGraph();
 	findPaths();
 	sortByLength();
-	printPaths();
+	//printPaths();
 }
 
 Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
@@ -320,7 +320,8 @@ void Graph::outputGraph() {
     out << VertexNum << " " << EdgeNum << endl;
     for(int i = 0; i < VertexNum; i++ ){
         for(int j = i + 1; j < VertexNum; j++){
-            out << i << " " << j << " " << BandwidthPrice[i][j] << " "<< BandwidthLim[i][j] << endl;
+			if (G[i][j])
+				out << i << " " << j << " " << BandwidthPrice[i][j] << " " << BandwidthLim[i][j] << endl;
         }
     }
     out.close();

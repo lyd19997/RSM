@@ -52,7 +52,7 @@ RequestList::RequestList(int topoVertexSize) {
 	ofstream out(RequestPathOut);
 	out << size() << endl;
 	for (vector<Request>::iterator it = begin(); it != end(); ++it) {
-		out << it->id << " " << it->src << " " << it->dst << " " << it->start << " " << it->end << " " << it->value << it->rate << endl;
+		out << it->id << " " << it->src << " " << it->dst << " " << it->start << " " << it->end << " " << it->value << " " << it->rate << endl;
 	}
 	out.close();
 }
@@ -78,4 +78,12 @@ bool cmp(Request a, Request b) {
 
 void RequestList::sortRequestbyValue() {
 	sort(begin(), end(), cmp);
+}
+
+double RequestList::rateMax() {
+	int maxRate = 0;
+	for (vector<Request>::iterator it = begin(); it != end(); ++it)
+		if (it->rate > maxRate)
+			maxRate = it->rate;
+	return maxRate;
 }

@@ -14,6 +14,9 @@ int main() {
 	srand((unsigned)time(0));
 	RequestList requests(VERTEXSIZE);
 	Graph topo(VERTEXSIZE, EDGESIZE);
+
+	//RequestList requests(RequestPathOut);
+	//Graph topo(GraphPathIn.c_str());
 	//-------RL-SRM---------
 	//opt
 	//MAA alg(topo, requests);

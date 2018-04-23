@@ -18,8 +18,8 @@
 #define MaxTime 50
 //-------request---------
 #define MIN_DURATION 10
-#define LAMBDA 5
-#define MEAN_TRANSFER_SIZE 5
+#define LAMBDA 1
+#define MEAN_TRANSFER_SIZE 20
 #define MEAN_VALUE 1
 //--------topo---------
 #define VERTEXSIZE 10
@@ -41,7 +41,7 @@ const std::string GraphPathOut = GraphPathIn;
 const std::string RequestPathIn = RequestPath
 + "Topo_node_" + std::to_string(VERTEXSIZE)
 + "_Peroid_" + std::to_string(PEROID)
-+ "_lambda_" + std::to_string(LAMBDA) + "_Duration_" + std::to_string(MIN_DURATION) + std::to_string(MEAN_TRANSFER_SIZE) + "_RequestIn.txt";
++ "_lambda_" + std::to_string(LAMBDA) + "_Duration_" + std::to_string(MIN_DURATION) +"_Meansize"+ std::to_string(MEAN_TRANSFER_SIZE) + "_RequestIn.txt";
 const std::string RequestPathOut = RequestPathIn;
 
 const std::string OutPath = "_Topo_node_" + std::to_string(VERTEXSIZE)
