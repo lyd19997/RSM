@@ -8,6 +8,7 @@ class Amoeba {
 public:
 	Amoeba(Graph topo, RequestList requests);
 	vector<int> schedule();
+	Result res;
 private:
 	clock_t startTime;
 
@@ -16,9 +17,9 @@ private:
 	vector<int> passPathIndex;
 	vector<vector<double>> remainCapacityPerEdge;
 
-	Result res;
+	
 
-	bool pushInPath(int indexReq, vector<vector<double>> &remainCapacityPerEdge);
+	int pushInPath(int indexReq, vector<vector<double>> &remainCapacityPerEdge);
 	vector<int> topTenRelatedReq(int indexReq);
 	void reschedule(vector<int> topTen);
 	void outRes();

@@ -8,10 +8,11 @@ class RsmGreedy {
 public:
 	RsmGreedy(Graph topo, RequestList requests);
 	void schedule();
+	Result res;
 private:
 	Graph topo;
 	RequestList requests;
-	Result res;
+	
 	vector<vector<double> > volPerTimeEdge;
 	vector<int> peakPerEdge;
 	vector<int> passPathIndex;

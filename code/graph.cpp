@@ -83,10 +83,10 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 		}
 	}
     pair2EIndex_init();
-	printGraph();
+	//printGraph();
 	findPaths();
 	sortByLength();
-	printPaths();
+	//printPaths();
 }
 
 void Graph::findPaths() {

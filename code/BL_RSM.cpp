@@ -38,6 +38,8 @@ vector<int> Blrsm::TAA() {
 		Pr_ij.push_back(vector<double>(x_ij[i].size(), 0));
 		for (int j = 0; j < x_ij[i].size(); ++j) 
 		{
+			cout << j << "  " << topo.pathSize(requests[i].getSrcDst()) << endl;//debug
+			cout << topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j) << endl; //·µ»Ø-1£¿
 			Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j)];//...pathCapacityEdgeIndex
 			Fs += Pr_ij.back()[j] * requests[i].value;
 		}
@@ -134,15 +136,19 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 				lhsExpr += xReqPath[j];
 			model.addConstr(lhsExpr, GRB_LESS_EQUAL, 1); // constrain 1
 		}
-		for (int k = 0; k < PEROID*topo.getVertexNum(); ++k)
+		for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][E]
 		{
 			GRBLinExpr lhsExpr = 0;
 			for (int i = 0; i < requests.size(); ++i)
 			{
 				for (int j = addr[i]; j < addr[i + 1]; ++j)
-					if (((k / topo.getEdgeNum()<requests[i].start || k / topo.getEdgeNum()>requests[i].end) ? 0 : 1)*topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j))
-						lhsExpr += requests[i].rate;
+					if (((k / topo.getEdgeNum() < requests[i].start || k / topo.getEdgeNum() > requests[i].end) ? 0 : 1) && topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j))
+					{
+						cout <<"linkInpath  "<< topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j) << endl;//debug
+						lhsExpr += requests[i].rate*xReqPath[j];
+					}
 			}
+			//cout << topo.linkCapacity(k%topo.getEdgeNum()) << std::endl;//debug
 			model.addConstr(lhsExpr, GRB_LESS_EQUAL, topo.linkCapacity(k%topo.getEdgeNum())); // constrain 2
 		}
 		GRBLinExpr obj = 0;
