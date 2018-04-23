@@ -81,10 +81,10 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 			G[connected[start]][connected[end]] = true;
 			G[connected[end]][connected[start]] = true;
             int capacity = Capacity[rand() % RANDNUM], prices = Prices[rand() % RANDNUM];
-            BandwidthLim[connected[start]][unconnected[end]] = capacity;
-            BandwidthLim[unconnected[end]][connected[start]] = capacity;
-            BandwidthPrice[connected[start]][unconnected[end]] = prices;
-            BandwidthPrice[unconnected[end]][connected[start]] = prices;
+            BandwidthLim[connected[start]][connected[end]] = capacity;
+            BandwidthLim[connected[end]][connected[start]] = capacity;
+            BandwidthPrice[connected[start]][connected[end]] = prices;
+            BandwidthPrice[connected[end]][connected[start]] = prices;
 //			vector<int> temp;
 //			temp.push_back(start);
 //			temp.push_back(end);
@@ -228,7 +228,7 @@ bool Graph::linkInPath(int e_src, int e_dst, int src, int dst, int pathIndex) {
 	vector<int> path = Paths[src][dst][pathIndex];
 	for (int e_s = 0; e_s < path.size() - 1; e_s++) {
 		int e_d = e_s + 1;
-		if (path[e_s] == e_src && path[e_d] == e_dst) return true;
+		if (e_s == e_src && e_d == e_dst) return true;
 	}
 	return false;
 }
