@@ -110,13 +110,13 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 		{
 			double sumDelta = 1;
 			for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
-				sumDelta += Pr_ij[i][j] * powl(1 + delta[k], requests[i].rate
+				sumDelta += Pr_ij[i][j] * powl(1 + delta[k%topo.getEdgeNum()], requests[i].rate
 					*((k / topo.getEdgeNum()<requests[i].start || k / topo.getEdgeNum()>requests[i].end) ? 0 : 1)
 					*topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j)) - Pr_ij[i][j];
 			prod *= sumDelta;
 		}
 		res_ += powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
-		cout << prod << " " << powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) << endl;
+		cout << res_<<" "<< prod << " " << powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) << endl;
 	}
 
 	return res_;
