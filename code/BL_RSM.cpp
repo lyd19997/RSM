@@ -13,7 +13,7 @@ Blrsm::Blrsm(Graph &topo, RequestList &requests) :topo(topo), requests(requests)
 		double left = 0, right = 1;
 		double mid = (left + right) / 2;
 		//cout << -1 / topo.linkCapacity(i) <<"   "<< pow(PEROID*(topo.getEdgeNum() + 1), -1 / (topo.linkCapacity(i)*1.0)) << endl;//debug
-		double bound = exp(-1)*powl(PEROID*(topo.getEdgeNum() + 1), -1 / (double)topo.linkCapacity(i));//精度
+		double bound = exp(-1)*powl(PEROID*(topo.getEdgeNum() + 1), -1 / (double)topo.linkCapacity(i)*1.0);//精度
 		while ((bound - SCALING(mid) > EPS || bound < SCALING(mid)) && !(cnt--<0 && bound>SCALING(mid))) {
 			if (bound < SCALING(mid))
 				right = mid;
@@ -149,17 +149,20 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 		{
 			for (int e = 0; e < topo.getEdgeNum(); ++e)
 			{
+				//cout << e << "  " << topo.findSrcDst(e).first << "--" << topo.findSrcDst(e).second << endl;
 				GRBLinExpr lhsExpr = 0;
 				for (int i = 0; i < requests.size(); ++i)
 				{
 					for (int j = addr[i]; j < addr[i + 1]; ++j)
+					{
+						//if (topo.findSrcDst(e) == pair<int, int>(0, 6) || topo.findSrcDst(e) == pair<int, int>(6, 0))
+						//	cout << e << "  " << requests[i].src << "  " << requests[i].dst << "  " << j - addr[i] << endl;
 						if (!(t < requests[i].start || t > requests[i].end) && topo.linkInPath(e, requests[i].getSrcDst(), j - addr[i]))
 						{
-							if (topo.findSrcDst(e) == pair<int, int>(0, 6))
-								cout << i << "  " << topo.findSrcDst(e).first << "--" << topo.findSrcDst(e).second << "  "
-								<< " linkInpath  " << j - addr[i] << "  " << topo.linkInPath(e, requests[i].getSrcDst(), j - addr[i]) << endl;//debug
+							//cout << "in" << endl;
 							lhsExpr += requests[i].rate*xReqPath[j];
 						}
+					}
 				}
 				//cout << topo.linkCapacity(k%topo.getEdgeNum()) << std::endl;//debug
 				model.addConstr(lhsExpr, GRB_LESS_EQUAL, topo.linkCapacity(e)); // constrain 2
