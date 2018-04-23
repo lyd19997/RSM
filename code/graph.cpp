@@ -52,14 +52,14 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 		auto end = static_cast<int>(rand() % unconnected.size());
 		G[connected[start]][unconnected[end]] = true;
 		G[unconnected[end]][connected[start]] = true;
-		vector<int> temp;
-		temp.push_back(start);
-		temp.push_back(end);
-		Paths[start][end].push_back(temp);
-		temp.clear();
-		temp.push_back(end);
-		temp.push_back(start);
-		Paths[end][start].push_back(temp);
+//		vector<int> temp;
+//		temp.push_back(start);
+//		temp.push_back(end);
+//		Paths[start][end].push_back(temp);
+//		temp.clear();
+//		temp.push_back(end);
+//		temp.push_back(start);
+//		Paths[end][start].push_back(temp);
 		connected.push_back(unconnected[end]);
 		unconnected.erase(unconnected.begin() + end);
 		leftNum--;
@@ -71,14 +71,14 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 		if (start != end && !G[connected[start]][connected[end]]) {
 			G[connected[start]][connected[end]] = true;
 			G[connected[end]][connected[start]] = true;
-			vector<int> temp;
-			temp.push_back(start);
-			temp.push_back(end);
-			Paths[start][end].push_back(temp);
-			temp.clear();
-			temp.push_back(end);
-			temp.push_back(start);
-			Paths[end][start].push_back(temp);
+//			vector<int> temp;
+//			temp.push_back(start);
+//			temp.push_back(end);
+//			Paths[start][end].push_back(temp);
+//			temp.clear();
+//			temp.push_back(end);
+//			temp.push_back(start);
+//			Paths[end][start].push_back(temp);
 			leftNum--;
 		}
 	}
@@ -101,6 +101,7 @@ void Graph::findPaths() {
 			}
 		}
 	}
+
 }
 
 void Graph::findPath(int start, int terminate, bool *visited) {
@@ -246,7 +247,7 @@ bool Graph::linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex) {
 void Graph::pair2EIndex_init() {
     int count = 0;
     for(int i = 0; i < VertexNum; i++){
-        for(int j = i + 1; j < VertexNum; j++){
+        for(int j = i; j < VertexNum; j++){
             if(G[i][j]){
                 pair2EIndex[i][j] = count;
                 count ++;
@@ -295,5 +296,6 @@ int Graph::pathCapacityEdgeIndex(pair<int, int> srcDst, int pathIndex) {
 			dst = path[i + 1];
         }
     }
-    return getEdgeIndex(pair<int, int>(src, dst));
+    int index = getEdgeIndex(pair<int, int>(src, dst));
+    return index;
 }
