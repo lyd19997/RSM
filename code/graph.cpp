@@ -19,10 +19,12 @@ Graph::Graph(const char *filename) {
 		}
 	}
 	for (int i = 0; i < EdgeNum; i++) {
-		int temp, start, terminate, price;
-		fscanf(fp, "%d %d %d %d", &temp, &start, &terminate, &price);
+		int start, terminate, price;
+		fscanf(fp, "%d %d %d", &start, &terminate, &price);
 		G[start][terminate] = true;
 		BandwidthPrice[start][terminate] = price;
+        G[terminate][start] = true;
+        BandwidthPrice[terminate][start] = price;
 	}
 	pair2EIndex_init();
 	printGraph();
@@ -39,8 +41,8 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 		for (int j = 0; j < VertexNum; j++) {
 			G[i][j] = false;
 			Bandwidth[i][j] = 0;
-            BandwidthLim[i][j] = Capacity[rand() % RANDNUM];
-            BandwidthPrice[i][j] = Prices[rand() % RANDNUM];
+            BandwidthLim[i][j] = 0;
+            BandwidthPrice[i][j] = 0;
 		}
 	}
 	vector<int> connected, unconnected;
@@ -52,6 +54,11 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 		auto end = static_cast<int>(rand() % unconnected.size());
 		G[connected[start]][unconnected[end]] = true;
 		G[unconnected[end]][connected[start]] = true;
+		int capacity = Capacity[rand() % RANDNUM], prices = Prices[rand() % RANDNUM];
+        BandwidthLim[connected[start]][unconnected[end]] = capacity;
+        BandwidthLim[unconnected[end]][connected[start]] = capacity;
+        BandwidthPrice[connected[start]][unconnected[end]] = prices;
+        BandwidthPrice[unconnected[end]][connected[start]] = prices;
 //		vector<int> temp;
 //		temp.push_back(start);
 //		temp.push_back(end);
@@ -71,6 +78,11 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 		if (start != end && !G[connected[start]][connected[end]]) {
 			G[connected[start]][connected[end]] = true;
 			G[connected[end]][connected[start]] = true;
+            int capacity = Capacity[rand() % RANDNUM], prices = Prices[rand() % RANDNUM];
+            BandwidthLim[connected[start]][unconnected[end]] = capacity;
+            BandwidthLim[unconnected[end]][connected[start]] = capacity;
+            BandwidthPrice[connected[start]][unconnected[end]] = prices;
+            BandwidthPrice[unconnected[end]][connected[start]] = prices;
 //			vector<int> temp;
 //			temp.push_back(start);
 //			temp.push_back(end);
@@ -87,6 +99,7 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
 	findPaths();
 	sortByLength();
 	//printPaths();
+    outputGraph();
 }
 
 void Graph::findPaths() {
@@ -298,4 +311,15 @@ int Graph::pathCapacityEdgeIndex(pair<int, int> srcDst, int pathIndex) {
     }
     int index = getEdgeIndex(pair<int, int>(src, dst));
     return index;
+}
+
+void Graph::outputGraph() {
+    ofstream out(GraphPathOut);
+    out << VertexNum << " " << EdgeNum << endl;
+    for(int i = 0; i < VertexNum; i++ ){
+        for(int j = i + 1; j < VertexNum; j++){
+            out << i << " " << j << " " << BandwidthPrice[i][j] << endl;
+        }
+    }
+    out.close();
 }

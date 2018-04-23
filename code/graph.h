@@ -64,6 +64,7 @@ public:
     int getPrice(int edgeIndex);
     int pathCapacityEdgeIndex(pair<int, int>srcDst, int pathIndex);
     void sortByLength();
+    void outputGraph();
     //output file
     //capacity
     /*1.根据路径长度升序排序
