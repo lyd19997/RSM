@@ -210,8 +210,8 @@ int Graph::pathCapacity(pair<int, int>srcDst, int pathIndex) {
 	return pathCapacity(srcDst.first, srcDst.second, pathIndex);
 }
 
-int Graph::pathCapacity(int src, int dst, int pathIndex) {
-	int min = MaxBandwidth;
+double Graph::pathCapacity(int src, int dst, int pathIndex) {
+	double min = MaxBandwidth;
 	if (pathIndex >= Paths[src][dst].size()) return 0;
 	vector<int> path = Paths[src][dst][pathIndex];
 
@@ -248,7 +248,7 @@ int Graph::pathSize(pair<int, int>srcDst) {
 	return Paths[srcDst.first][srcDst.second].size();
 }
 
-int Graph::linkCapacity(int edgeIndex) {
+double Graph::linkCapacity(int edgeIndex) {
     pair<int, int> srcDst = findSrcDst(edgeIndex);
 	return BandwidthLim[srcDst.first][srcDst.second];
 }
@@ -300,12 +300,13 @@ int Graph::getPrice(int edgeIndex) {
 }
 
 int Graph::pathCapacityEdgeIndex(pair<int, int> srcDst, int pathIndex) {
-    int min = INT_MAX, src = 0, dst = 0;
+	double min = INT_MAX;
+	int src = 0, dst = 0;
     int path_size = Paths[srcDst.first][srcDst.second].size();
     if(pathIndex >= path_size) return -1;
     vector<int> path(Paths[srcDst.first][srcDst.second][pathIndex]);
     for(int i = 0; i < path.size() - 1; i++){
-        if(Bandwidth[path[i]][path[i + 1]] < min){
+        if(BandwidthLim[path[i]][path[i + 1]] < min){
             min = BandwidthLim[path[i]][path[i + 1]];
 			src = path[i];
 			dst = path[i + 1];

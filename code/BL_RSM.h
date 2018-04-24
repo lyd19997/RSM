@@ -10,11 +10,11 @@ using namespace std;
 class Blrsm {
 public:
 	void schedule();
-	Blrsm(Graph &topo, RequestList &requests);
+	Blrsm(Graph topo, RequestList requests);
 	Result res;
 private:
-	Graph &topo;
-	RequestList &requests;
+	Graph topo;
+	RequestList requests;
 	
 	vector<int> TAA();
 	vector<vector<double> > Pr_ij;
@@ -26,5 +26,9 @@ private:
 
 	vector<vector<double> > relaxation_LP();
 	double PrUpperBound(int deep, const vector<int> &resX,int branch);
+	void gReq2One(int x);
 	void outRes();
+
+
+	double maxValue = 0, maxRate = 0;//request
 };

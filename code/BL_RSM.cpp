@@ -4,9 +4,15 @@
 #define DELTA0(x) (x-(1+x)*log(1+x))
 #define SCALING(x) ((x)*exp(-1 * (x))) 
 
-Blrsm::Blrsm(Graph &topo, RequestList &requests) :topo(topo), requests(requests), res(topo, requests) {// scaling,delta 1-k,
+Blrsm::Blrsm(Graph topo, RequestList requests) :topo(topo), requests(requests), res(topo, requests) {// scaling,delta 1-k,
 	delta.push_back(0);
 	//cout << requests.rateMax() << "  " << exp(-1) << endl;//debug
+	for (int i = 0; i < requests.size(); ++i)
+	{
+		if (maxValue < requests[i].value) maxValue = requests[i].value;
+		if (maxRate < requests[i].rate) maxRate = requests[i].rate;
+	}
+	gReq2One(-1);
 	for (int i = 0; i < topo.getEdgeNum(); ++i)
 	{
 		int cnt = 100;
@@ -27,8 +33,20 @@ Blrsm::Blrsm(Graph &topo, RequestList &requests) :topo(topo), requests(requests)
 	}
 }
 
+
+void Blrsm::gReq2One(int x) {
+	for (int i = 0; i < requests.size(); ++i)
+	{
+		requests[i].value *= powl(maxValue, x);
+		requests[i].rate *= powl(maxRate, x);
+	}
+	for (int i = 0; i < topo.getEdgeNum(); ++i)
+		topo.BandwidthLim[topo.findSrcDst(i).first][topo.findSrcDst(i).second] *= powl(maxRate, x);
+}
+
 void Blrsm::schedule() {
 	passPathIndex = TAA();
+	gReq2One(1);
 	outRes();
 }
 

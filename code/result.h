@@ -16,7 +16,7 @@ public:
 	vector<vector<double> > volPerTimeEdge;
 	vector<int> peakPerEdge;
 	vector<int> passPathIndex;
-	vector<vector<int> > passMultiPathindex;
+	vector<vector<double> > passMultiPathindex;
 	void outResult();
 
 	Result(Graph topo_, RequestList requests_);//≥ı ºªØvector

@@ -21,7 +21,7 @@ public:
 	const int Capacity[RANDNUM] = { 50, 47, 41, 32, 69, 57, 73, 37 };
 	bool G[VERTEXSIZE][VERTEXSIZE];
 	double Bandwidth[VERTEXSIZE][VERTEXSIZE];
-	int BandwidthLim[VERTEXSIZE][VERTEXSIZE];//每条边的最大容量限定
+	double BandwidthLim[VERTEXSIZE][VERTEXSIZE];//每条边的最大容量限定
 	int BandwidthPrice[VERTEXSIZE][VERTEXSIZE];
 
 	int pair2EIndex[VERTEXSIZE][VERTEXSIZE];
