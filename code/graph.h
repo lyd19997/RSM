@@ -51,10 +51,10 @@ public:
 	void printPaths();
 
 	int pathSize(pair<int, int>srcDst);//---
-	int pathCapacity(int src, int dst, int pathIndex);//确定（src->dst）的第pathIndex条路径的容量
+	double pathCapacity(int src, int dst, int pathIndex);//确定（src->dst）的第pathIndex条路径的容量
 
-	int linkCapacity(int egeIndex);//--
-	int pathCapacity(pair<int, int>srcDst, int pathIndex);//--
+	double linkCapacity(int egeIndex);//--
+	double pathCapacity(pair<int, int>srcDst, int pathIndex);//--
 
 
     pair<int, int>findSrcDst(int edgeIndex); //由边的编号映射到点

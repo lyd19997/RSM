@@ -206,7 +206,7 @@ void Graph::printPaths() {
 	}
 }
 
-int Graph::pathCapacity(pair<int, int>srcDst, int pathIndex) {
+double Graph::pathCapacity(pair<int, int>srcDst, int pathIndex) {
 	return pathCapacity(srcDst.first, srcDst.second, pathIndex);
 }
 
