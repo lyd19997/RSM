@@ -4,7 +4,7 @@
 #define DELTA0(x) (x-(1+x)*log(1+x))
 #define SCALING(x) ((x)*exp(-1 * (x))) 
 
-Blrsm::Blrsm(Graph topo, RequestList requests) :topo(topo), requests(requests), res(topo, requests) {// scaling,delta 1-k,
+Blrsm::Blrsm(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), res(topo, requests) {// scaling,delta 1-k,
 	delta.push_back(0);
 	//cout << requests.rateMax() << "  " << exp(-1) << endl;//debug
 	for (int i = 0; i < requests.size(); ++i)
@@ -18,7 +18,7 @@ Blrsm::Blrsm(Graph topo, RequestList requests) :topo(topo), requests(requests), 
 		int cnt = 100;
 		double left = 0, right = 1;
 		double mid = (left + right) / 2;
-		//cout << powl(PEROID*(topo.getEdgeNum() + 1), -1 / (double)topo.linkCapacity(i)) <<"   "<< pow(PEROID*(topo.getEdgeNum() + 1), -1 / (topo.linkCapacity(i)*1.0)) << endl;//debug
+		//cout << powl(PEROID*(topo.getEdgeNum() + 1), -1 / (double)topo.linkCapacity(i)) <<"   "<< topo.linkCapacity(i) << endl;//debug
 		double bound = exp(-1)*powl(PEROID*(topo.getEdgeNum() + 1), -1 / (double)topo.linkCapacity(i));//¾«¶È
 		while ((bound - SCALING(mid) > EPS || bound < SCALING(mid)) && !(cnt--<0 && bound>SCALING(mid))) {
 			if (bound < SCALING(mid))
@@ -120,7 +120,7 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 		prod *= sumPr*powl(1 + delta[0], -1 * requests[i].value) + 1 - sumPr;
 	}
 	res_ += powl(1 + delta[0], Fbound - gotValue)*prod;
-	cout << res_ << endl;//debug
+	
 	//---------------------------------------------------------
 	for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][N]
 	{
@@ -140,11 +140,11 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 			prod *= sumDelta;
 		}
 		res_ += powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
-		cout << res_<<" "<< prod << " " << powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) << endl;//debug
-		if (res_ > 1)
-			cout << k <<" ?? "<< k%topo.getEdgeNum() << endl;
+		//cout << res_<<" "<< prod << " " << powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) << endl;//debug
+		//if (res_ > 1)
+		//	cout << k%topo.getEdgeNum() <<" ?? "<< topo.linkCapacity(k%topo.getEdgeNum()) << endl;
 	}
-
+	cout << res_ << endl;//debug
 	return res_;
 }
 

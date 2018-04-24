@@ -10,7 +10,7 @@ using namespace std;
 class Blrsm {
 public:
 	void schedule();
-	Blrsm(Graph topo, RequestList requests);
+	Blrsm(Graph topo_, RequestList requests_);
 	Result res;
 private:
 	Graph topo;
