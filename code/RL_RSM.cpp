@@ -4,7 +4,7 @@
 
 #include "RL_RSM.h"
 
-MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), model(*env) , result(topo, requests){
+MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), model(*env) , result(topo, requests), opt(topo, requests){
 	startTime = clock();
 	VertexNum = graph.getVertexNum();
 	EdgeNum = graph.getEdgeNum();
@@ -25,12 +25,16 @@ MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), mod
 	result.requestNum = requests.size();
 	result.receiveNum = requests.size();
 	result.algName = "MAA";
+    opt.requestNum = requests.size();
+    opt.receiveNum = requests.size();
+    opt.algName = "MAA_opt";
 	PrReqPath_init();
 	bandwidthSrcToDst_init();
 	iReqPathEdge_init();
 	addConstraints();
 	setObj();
 	linearSolver();
+	opt_bandwidthTime();
 	pathSelecting();
 	bandwidthTime_init();
 	bandwidthRounding();
@@ -40,7 +44,7 @@ MAA::MAA(Graph &topo, RequestList &requests):graph(topo),requests(requests), mod
 
 
 
-MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), model(*env) ,result(graph, requests){
+MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilename), requests(requests_), model(*env) ,result(graph, requests), opt(graph, requests){
 	startTime = clock();
 	VertexNum = graph.getVertexNum();
 	EdgeNum = graph.getEdgeNum();
@@ -61,12 +65,17 @@ MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilenam
 	result.requestNum = requests.size();
 	result.receiveNum = requests.size();
 	result.algName = "MAA";
+    opt.requestNum = requests.size();
+    opt.receiveNum = requests.size();
+    opt.algName = "MAA_opt";
 	PrReqPath_init();
 	bandwidthSrcToDst_init();
 	iReqPathEdge_init();
 	addConstraints();
 	setObj();
 	linearSolver();
+	opt.getRunTime();
+	opt_bandwidthTime();
 	pathSelecting();
 	bandwidthTime_init();
 	bandwidthRounding();
@@ -74,7 +83,7 @@ MAA::MAA(const char* gFilename, int time, RequestList requests_) :graph(gFilenam
 	input_result();
 }
 
-MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), model(*env),result(graph, requests){
+MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum), requests(requests_), model(*env),result(graph, requests), opt(graph, requests){
 	startTime = clock();
 	VertexNum = vNum;
 	EdgeNum = eNum;
@@ -95,12 +104,17 @@ MAA::MAA(int vNum, int eNum, int time, RequestList requests_) :graph(vNum, eNum)
 	result.requestNum = requests.size();
 	result.receiveNum = requests.size();
 	result.algName = "MAA";
+    opt.requestNum = requests.size();
+    opt.receiveNum = requests.size();
+    opt.algName = "MAA_opt";
 	PrReqPath_init();
 	bandwidthSrcToDst_init();
 	iReqPathEdge_init();
 	addConstraints();
 	setObj();
 	linearSolver();
+	opt.getRunTime();
+	opt_bandwidthTime();
 	pathSelecting();
 	bandwidthTime_init();
 	bandwidthRounding();
@@ -115,6 +129,7 @@ bool MAA::linearSolver() {
 		for (int j = 0; j < VertexNum; j++) {
 			if (graph.G[i][j]) {
 				cout << i << " " << j << " " << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << "\n";
+				opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
 			}
 		}
 	}
@@ -124,7 +139,7 @@ bool MAA::linearSolver() {
 		}
 	}
 	cout << "B " << model.get(GRB_DoubleAttr_ObjVal) << "\n";
-
+    opt.cost = int(model.get(GRB_DoubleAttr_ObjVal) + 0.5);
 	return true;
 }
 
@@ -222,15 +237,18 @@ void MAA::pathSelecting() {
 	for (int i = 0; i < requestsNum; i++) {
 		int start = requests[i].src, end = requests[i].dst;//int start = requests.requests[i][0], end = requests.requests[i][1];********
 		vector<vector<int>> paths = graph.Paths[start][end];
+		vector<double> pathWeight;
 		double temp = 0;
 		for (int j = 0; j < PrReqPath[i].size(); j++) {
 			temp += PrReqPath[i][j].get(GRB_DoubleAttr_X) * j;
+			pathWeight.push_back(PrReqPath[i][j].get(GRB_DoubleAttr_X));
 		}
 		int index = int(round(temp));
 		printf("chose %d\n", index);
 		vector<int> path(paths[index]);
 		final_path.push_back(path);
 		result.passPathIndex[i] = index;
+		opt.passMultiPathindex.push_back(pathWeight);
 	}
 
 }
@@ -297,6 +315,7 @@ void MAA::bandwidthTime_init() {
 }
 
 void MAA::input_result() {
+
 	for(int t = 0; t < totalTime; t++){
 		for(int i = 0; i < VertexNum; i++){
 			for(int j = 0; j < VertexNum; j++){
@@ -306,6 +325,21 @@ void MAA::input_result() {
 		}
 	}
 	result.runTime = (clock() - startTime) * 1.0 / CLOCKS_PER_SEC;
+}
+
+void MAA::opt_bandwidthTime() {
+	for (int t = 0; t < totalTime; t++) {
+		for (int i = 0; i < requestsNum; i++) {
+			if (requests[i].start > t || t > requests[i].end) continue;//if (requests.requests[i][2] > t || t > requests.requests[i][3]) continue;*****
+			for (int j = 0; j < PrReqPath[i].size(); j++) {
+				vector<int> path = graph.getPath(pair<int, int>(requests[i].src, requests[i].dst), j);
+				for(int p = 0; p < path.size() - 1; p++){
+					int index = graph.getEdgeIndex(pair<int, int>(path[p], path[p+1]));
+					opt.volPerTimeEdge[t][index] += PrReqPath[i][j].get(GRB_DoubleAttr_X) * requests[i].rate;
+				}
+			}
+		}
+	}
 }
 
 

@@ -46,6 +46,7 @@ public:
 
 	RequestList requests;
 	Result result;
+	Result opt;
 	clock_t startTime;
 
 	void PrReqPath_init();
@@ -61,6 +62,7 @@ public:
 
 	void bandwidthTime_init();
 	void input_result();
+	void opt_bandwidthTime();
 
 	int getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
 };
