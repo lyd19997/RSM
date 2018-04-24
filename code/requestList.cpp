@@ -46,7 +46,7 @@ RequestList::RequestList(int topoVertexSize) {
 			int pos = rand() % (topoVertexSize*(topoVertexSize - 1));
 			int src = pos / (topoVertexSize - 1);
 			int dst = pos % ((topoVertexSize - 1));
-			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, 10, randomExponential(1.0)*MEAN_TRANSFER_SIZE));
+			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, (rand()%10+1)*1.0/10.0, randomExponential(1.0)*MEAN_TRANSFER_SIZE));
 		}
 	}
 	ofstream out(RequestPathOut);
@@ -63,8 +63,8 @@ RequestList::RequestList(string PathIn) {
 		std::cout << "requestIn error" << endl;
 		exit(1);
 	}
-	int num, id, src, dst, arriveTime, deadline, value;
-	double rate;
+	int num, id, src, dst, arriveTime, deadline;
+	double rate, value;
 	in >> num;
 	for (int i = 0; i < num; ++i) {
 		in >> id >> src >> dst >> arriveTime >> deadline >> value >> rate;

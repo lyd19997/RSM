@@ -18,7 +18,7 @@
 #define MaxTime 50
 //-------request---------
 #define MIN_DURATION 10
-#define LAMBDA 1
+#define LAMBDA 20
 #define MEAN_TRANSFER_SIZE 20
 #define MEAN_VALUE 1
 //--------topo---------

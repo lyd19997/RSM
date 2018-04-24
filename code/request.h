@@ -4,12 +4,12 @@ using namespace std;
 
 class Request {
 public:
-	 int id, value;
+	 int id;
 	 int src, dst, start, end;
-	 double rate;
+	 double rate, value;
 
 
 	pair<int, int> getSrcDst();
-	Request(int id_, int src_, int dst_, int start_, int end_, int value_, double rate_);
+	Request(int id_, int src_, int dst_, int start_, int end_, double value_, double rate_);
 
 };
