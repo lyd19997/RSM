@@ -139,7 +139,7 @@ bool MAA::linearSolver() {
 		}
 	}
 	cout << "B " << model.get(GRB_DoubleAttr_ObjVal) << "\n";
-//    opt.cost = model.get(GRB_DoubleAttr_ObjVal);
+    opt.cost = int(model.get(GRB_DoubleAttr_ObjVal) + 0.5);
 	return true;
 }
 
