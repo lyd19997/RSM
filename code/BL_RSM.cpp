@@ -86,12 +86,18 @@ vector<int> Blrsm::TAA() {
 	{
 		double PrMin = 1; // PrMin > 1
 		int pathMinPr = -2;
-		for (int j = -1; j < topo.pathSize(requests[i].getSrcDst()); ++j) // j == -1 
+		for (int j = topo.pathSize(requests[i].getSrcDst()) - 1; j >= -1; --j) // j == -1 
 		{
 			if (j >= 0 && x_ij[i][j] == 0) continue;
-			if (PrMin > PrUpperBound(i, resX, j))
+			if (j >= 0 && x_ij[i][j] == 1)
 			{
-				PrMin = PrUpperBound(i, resX, j);
+				pathMinPr = j;
+				break;
+			}
+			double upperBound = PrUpperBound(i, resX, j);
+			if (PrMin > upperBound)
+			{
+				PrMin = upperBound;
 				pathMinPr = j;
 			}
 		}
@@ -125,13 +131,18 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 	for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][N]
 	{
 		double sumCapacity = 0;
-		for (int i = 0; i < deep; ++i)
+		for (int i = 0; i < deep; ++i)          // < deep
 			sumCapacity += requests[i].rate*((k / topo.getEdgeNum()<requests[i].start || k / topo.getEdgeNum()>requests[i].end) ? 0 : 1)
 				*(resX[i] < 0 ? 0 : 1)
 				*topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), resX[i]);
 		
+		sumCapacity += requests[deep].rate*((k / topo.getEdgeNum()<requests[deep].start || k / topo.getEdgeNum()>requests[deep].end) ? 0 : 1)  //   ==  deep
+			*(branch < 0 ? 0 : 1)
+			*topo.linkInPath(k%topo.getEdgeNum(), requests[deep].getSrcDst(), branch);
+
+
 		prod = 1;
-		for (int i = deep; i < requests.size(); ++i)
+		for (int i = deep + 1; i < requests.size(); ++i)  //          >  deep
 		{
 			double sumDelta = 1;
 			for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
@@ -144,7 +155,7 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 		//if (res_ > 1)
 		//	cout << k%topo.getEdgeNum() <<" ?? "<< topo.linkCapacity(k%topo.getEdgeNum()) << endl;
 	}
-	cout << res_ << endl;//debug
+	cout <</* branch<<"  "<<*/res_ << endl;//debug
 	return res_;
 }
 
