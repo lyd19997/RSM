@@ -46,7 +46,7 @@ RequestList::RequestList(int topoVertexSize) {
 			int pos = rand() % (topoVertexSize*(topoVertexSize - 1));
 			int src = pos / (topoVertexSize - 1);
 			int dst = pos % ((topoVertexSize - 1));
-			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, randomExponential(1.0)*MEAN_VALUE, randomExponential(1.0)*MEAN_TRANSFER_SIZE));
+			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, (50 + rand() % 51)*MEAN_VALUE, randomExponential(1.0)*MEAN_TRANSFER_SIZE));
 		}
 	}
 	ofstream out(RequestPathOut);

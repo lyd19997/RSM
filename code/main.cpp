@@ -12,11 +12,11 @@
 int main() {
 
 	srand((unsigned)time(0));
-	RequestList requests(VERTEXSIZE);
-	Graph topo(VERTEXSIZE, EDGESIZE);
+	//RequestList requests(VERTEXSIZE);
+	//Graph topo(VERTEXSIZE, EDGESIZE);
 
-	//RequestList requests(RequestPathOut);
-	//Graph topo(GraphPathIn.c_str());
+	RequestList requests(RequestPathOut);
+	Graph topo(GraphPathIn.c_str());
 	//-------RL-SRM---------
 	//opt
 	//MAA alg(topo, requests);
@@ -26,17 +26,17 @@ int main() {
 
 	//-------BL-RSM---------
 	//opt
-	Blrsm alg(topo, requests);  
+	//Blrsm alg(topo, requests);  
 	//Amoeba alg(topo, requests);   
-	//ValueFirst alg(topo, requests);
+	ValueFirst alg(topo, requests);
 
 
 	//----------------------
 	//opt
 	//alg
 	//RsmGreedy alg(topo, requests);  
-	alg.schedule();
-	alg.res.outResult();
+	alg.result.outResult();
+	//alg.res.outResult();
 	
 	return 0;
 }

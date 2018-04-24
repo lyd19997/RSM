@@ -17,7 +17,7 @@
 #define PEROID 50
 #define MaxTime 50
 //-------request---------
-#define MIN_DURATION 10
+#define MIN_DURATION 2
 #define LAMBDA 20
 #define MEAN_TRANSFER_SIZE 20
 #define MEAN_VALUE 1

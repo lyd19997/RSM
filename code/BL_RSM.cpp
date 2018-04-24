@@ -94,11 +94,11 @@ vector<int> Blrsm::TAA() {
 		for (int j = topo.pathSize(requests[i].getSrcDst()) - 1; j >= -1; --j)
 		{
 			if (j >= 0 && !x_ij[i][j]) continue;
-			//if (j >= 0 && x_ij[i][j] == 1)
-			//{
-			//	resX[i] = j;
-			//	break;
-			//}
+			if (j >= 0 && x_ij[i][j] == 1)
+			{
+				resX[i] = j;
+				break;
+			}
 			double tmpPr = PrUpperBound(i, resX, j);
 			if (tmpPr < minPr)
 			{
@@ -129,7 +129,7 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 		prod *= sumPr*powl(1 + delta[0], -1 * requests[i].value) + 1 - sumPr;
 	}
 	res_ += powl(1 + delta[0], Fbound - gotValue)*prod;
-	
+	//cout <</* branch<<"  "<<*/res_ << endl;
 	//---------------------------------------------------------
 	for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][N]
 	{
@@ -150,11 +150,12 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 			double sumDelta = 1;
 			for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
 				if ((k / topo.getEdgeNum() >= requests[i].start&&k / topo.getEdgeNum() <= requests[i].end) && topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j))
-				sumDelta += Pr_ij[i][j] * powl(1 + delta[k%topo.getEdgeNum()], requests[i].rate) - Pr_ij[i][j];
+				sumDelta += Pr_ij[i][j] * powl(1 + delta[k%topo.getEdgeNum()+1], requests[i].rate) - Pr_ij[i][j];
 			prod *= sumDelta;
 		}
-		res_ += powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
-		//cout << res_<<" "<< prod << " " << powl(1 + delta[k%topo.getEdgeNum()], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) << endl;//debug
+		res_ += powl(1 + delta[k%topo.getEdgeNum()+1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
+		//cout << res_<<" "<< prod << " " << powl(1 + delta[k%topo.getEdgeNum()+1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) 
+		//	<<" "<< sumCapacity <<"  "<< topo.linkCapacity(k%topo.getEdgeNum()) << endl;//debug
 		//if (res_ > 1)
 		//	cout << k%topo.getEdgeNum() <<" ?? "<< topo.linkCapacity(k%topo.getEdgeNum()) << endl;
 	}

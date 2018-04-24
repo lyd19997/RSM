@@ -144,6 +144,7 @@ void ValueFirst::result_input() {
     for(int t = 0; t < totalTime; t++){
         for(int i = 0; i < VertexNum; i++){
             for(int j = 0; j < VertexNum; j++){
+				if (graph.G[i][j])
                 result.volPerTimeEdge[t][graph.getEdgeIndex(pair<int, int>(i, j))] = getEdgeBandwidthUsage(i, j, t);
             }
         }
