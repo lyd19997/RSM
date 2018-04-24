@@ -18,12 +18,12 @@
 #define MaxTime 50
 //-------request---------
 #define MIN_DURATION 2
-#define LAMBDA 20
+#define LAMBDA 30
 #define MEAN_TRANSFER_SIZE 20
 #define MEAN_VALUE 1
 //--------topo---------
-#define VERTEXSIZE 10
-#define EDGESIZE 14
+#define VERTEXSIZE 5
+#define EDGESIZE 8
 #define MaxVertexNum 30
 #define MaxBandwidth 3000
 #define MaxBandwidthPrice 10

@@ -94,11 +94,11 @@ vector<int> Blrsm::TAA() {
 		for (int j = topo.pathSize(requests[i].getSrcDst()) - 1; j >= -1; --j)
 		{
 			if (j >= 0 && !x_ij[i][j]) continue;
-			if (j >= 0 && x_ij[i][j] == 1)
-			{
-				resX[i] = j;
-				break;
-			}
+			//if (j >= 0 && x_ij[i][j] == 1)
+			//{
+			//	resX[i] = j;
+			//	break;
+			//}
 			double tmpPr = PrUpperBound(i, resX, j);
 			if (tmpPr < minPr)
 			{
@@ -131,6 +131,7 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 	res_ += powl(1 + delta[0], Fbound - gotValue)*prod;
 	//cout <</* branch<<"  "<<*/res_ << endl;
 	//---------------------------------------------------------
+	double debug = 0;
 	for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][N]
 	{
 		double sumCapacity = 0;
@@ -154,12 +155,15 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 			prod *= sumDelta;
 		}
 		res_ += powl(1 + delta[k%topo.getEdgeNum()+1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
+		debug += powl(1 + delta[k%topo.getEdgeNum() + 1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
 		//cout << res_<<" "<< prod << " " << powl(1 + delta[k%topo.getEdgeNum()+1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) 
 		//	<<" "<< sumCapacity <<"  "<< topo.linkCapacity(k%topo.getEdgeNum()) << endl;//debug
-		//if (res_ > 1)
-		//	cout << k%topo.getEdgeNum() <<" ?? "<< topo.linkCapacity(k%topo.getEdgeNum()) << endl;
+		/*if (res_ > 1)
+			cout << k%topo.getEdgeNum() <<" ?? "<< topo.linkCapacity(k%topo.getEdgeNum()) << endl;*/
 	}
-	cout <</* branch<<"  "<<*/res_ << endl;//debug
+	//cout << debug << "--"<< endl;
+	//if (res_ > 1)
+		cout <</* branch<<"  "<<*/res_ << endl;//debug
 	return res_;
 }
 
@@ -237,7 +241,8 @@ void Blrsm::outRes() {
 	res.income = 0;
 	res.receiveNum = 0;
 	for (int i = 0; i < requests.size(); ++i)
-		res.income += (passPathIndex[i] == -1 ? 0 : requests[i].value), res.receiveNum += 1;
+		if (passPathIndex[i] != -1)
+			res.income += requests[i].value, res.receiveNum += 1;
 	res.passPathIndex = passPathIndex;
 	for (int e = 0; e < topo.getEdgeNum(); ++e)
 		res.peakPerEdge[e] = topo.linkCapacity(e);
