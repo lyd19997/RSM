@@ -4,7 +4,7 @@
 #define DELTA0(x) (x-(1+x)*log(1+x))
 #define SCALING(x) ((x)*exp(-1 * (x))) 
 
-Blrsm::Blrsm(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), res(topo, requests) {// scaling,delta 1-k,
+Blrsm::Blrsm(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), res(topo_, requests_), passPathIndex(requests_.size(), -1) {// scaling,delta 1-k,
 	delta.push_back(0);
 	//cout << requests.rateMax() << "  " << exp(-1) << endl;//debug
 	for (int i = 0; i < requests.size(); ++i)
@@ -50,6 +50,12 @@ void Blrsm::schedule() {
 	outRes();
 }
 
+void Blrsm::optimal() {
+	vector<vector<double> > passMultiPathIndex = relaxation_LP();
+	gReq2One(1);
+	outResOpt(passMultiPathIndex);
+}
+
 vector<int> Blrsm::TAA() {
 	vector<int> resX(requests.size(),-1);
 	vector<vector<double> > x_ij = relaxation_LP();
@@ -59,8 +65,6 @@ vector<int> Blrsm::TAA() {
 		Pr_ij.push_back(vector<double>(x_ij[i].size(), 0));
 		for (int j = 0; j < x_ij[i].size(); ++j) 
 		{
-			//cout << j << "  " << topo.pathSize(requests[i].getSrcDst()) << endl;//debug
-			//cout << topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j) << endl; //·µ»Ø-1£¿
 			Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j)];//...pathCapacityEdgeIndex
 			Fs += Pr_ij.back()[j] * requests[i].value;
 		}
@@ -79,31 +83,30 @@ vector<int> Blrsm::TAA() {
 			right = mid;
 		mid = (right + left) / 2;
 		//cout << cnt << endl;//debug
+		if (cnt < -100)
+			cout << "calc error in  delta0" << endl;
 	}
 	delta[0] = mid;
-	//--
+
 	for (int i = 0; i < requests.size(); ++i)
 	{
-		double PrMin = 1; // PrMin > 1
-		int pathMinPr = -2;
-		for (int j = topo.pathSize(requests[i].getSrcDst()) - 1; j >= -1; --j) // j == -1 
+		double minPr = 1;
+		for (int j = topo.pathSize(requests[i].getSrcDst()) - 1; j >= -1; --j)
 		{
-			if (j >= 0 && x_ij[i][j] == 0) continue;
-			if (j >= 0 && x_ij[i][j] == 1)
+			if (j >= 0 && !x_ij[i][j]) continue;
+			//if (j >= 0 && x_ij[i][j] == 1)
+			//{
+			//	resX[i] = j;
+			//	break;
+			//}
+			double tmpPr = PrUpperBound(i, resX, j);
+			if (tmpPr < minPr)
 			{
-				pathMinPr = j;
-				break;
-			}
-			double upperBound = PrUpperBound(i, resX, j);
-			if (PrMin > upperBound)
-			{
-				PrMin = upperBound;
-				pathMinPr = j;
+				minPr = tmpPr;
+				resX[i] = j;
 			}
 		}
-		if (pathMinPr == -2) { cout << i << " Wa pathMinPr == -2" << endl; while (1); }//debug
-		resX[i] = pathMinPr;
-		cout << i << " : " << resX[i] << "  -  " << PrMin << endl;
+		cout << i << " : " << resX[i] << "   " << minPr << endl;
 	}
 	return resX;
 }
@@ -160,7 +163,7 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 }
 
 vector<vector<double> > Blrsm::relaxation_LP() {
-	vector<vector<double> > res; res.clear();
+	vector<vector<double> > res_; res_.clear();
 	vector<int> addr(1, 0);
 	for (vector<Request>::iterator it = requests.begin(); it != requests.end(); ++it)
 		addr.push_back(addr.back() + topo.pathSize(it->getSrcDst()));
@@ -210,24 +213,25 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 		{
 			for (int i = 0; i < requests.size(); ++i)
 			{
-				res.push_back(vector<double>());
+				res_.push_back(vector<double>());
 				for (int j = addr[i]; j < addr[i + 1]; ++j)
-					res.back().push_back(xReqPath[j].get(GRB_DoubleAttr_X));
+					res_.back().push_back(xReqPath[j].get(GRB_DoubleAttr_X));
 			}
 		}
 	}
 	catch (...) {
 		
 	}
-	if (res.empty() && requests.size()) {
+	if (res_.empty() && requests.size()) {
 		cout << "LP error" << endl;
 		while (1);
 	}
-	return res;
+	return res_;
 }
 
 void Blrsm::outRes() {
 	res.algName = "BL-SRM";
+	res.getRunTime();
 	res.cost = 0;
 	res.income = 0;
 	res.receiveNum = 0;
@@ -237,13 +241,45 @@ void Blrsm::outRes() {
 	for (int e = 0; e < topo.getEdgeNum(); ++e)
 		res.peakPerEdge[e] = topo.linkCapacity(e);
 	res.requestNum = requests.size();
-	res.getRunTime();
-	for (vector<Request>::iterator it = requests.begin(); it != requests.end(); ++it)
+	
+	for (int i = 0; i < requests.size(); ++i)
 	{
-		for (vector<int>::iterator ite = topo.getPath(it->getSrcDst(), passPathIndex[it - requests.begin()]).begin(); ite != topo.getPath(it->getSrcDst(), passPathIndex[it - requests.begin()]).end(); ++ite)
+		if (passPathIndex[i] == -1) continue;
+		vector<int> edgeList = topo.getPath(requests[i].getSrcDst(), passPathIndex[i]);
+		for (vector<int>::iterator ite = edgeList.begin(); ite != edgeList.end(); ++ite)
 		{
-			for (int t = it->start; t <= it->end; ++t)
-				res.volPerTimeEdge[t][*ite] += it->rate;
+			for (int t = requests[i].start; t <= requests[i].end; ++t)
+				res.volPerTimeEdge[t][*ite] += requests[i].rate;
+		}
+	}
+}
+
+void Blrsm::outResOpt(vector<vector<double> > passMultiPathIndex) {
+	res.algName = "BL-SRM-Optimal";
+	res.cost = 0;
+	res.income = 0;
+	res.receiveNum = 0;
+	for (int i = 0; i < requests.size(); ++i)
+		for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
+			res.income += passMultiPathIndex[i][j] * requests[i].value, res.receiveNum += passMultiPathIndex[i][j];
+
+	for (int e = 0; e < topo.getEdgeNum(); ++e)
+		res.peakPerEdge[e] = topo.linkCapacity(e);
+	res.requestNum = requests.size();
+	res.getRunTime();
+
+	res.passMultiPathindex = passMultiPathIndex;
+	for (int i = 0; i < requests.size(); ++i)
+	{
+		for (int j = 0; j < passMultiPathIndex[i].size(); ++j)
+		{
+			if (passMultiPathIndex[i][j] == 0) continue;
+			vector<int> edgeList = topo.getPath(requests[i].getSrcDst(), j);
+			for (vector<int>::iterator ite = edgeList.begin(); ite != edgeList.end(); ++ite)
+			{
+				for (int t = requests[i].start; t <= requests[i].end; ++t)
+					res.volPerTimeEdge[t][*ite] += requests[i].rate*passMultiPathIndex[i][j];
+			}
 		}
 	}
 }

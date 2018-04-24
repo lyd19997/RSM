@@ -4,6 +4,7 @@
 Result::Result(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), startTime(clock()), volPerTimeEdge(PEROID, vector<double>(topo_.getEdgeNum(), 0)),
 peakPerEdge(topo_.getEdgeNum(), 0), passPathIndex(requests.size(), -1), passMultiPathindex()//暂时就这样吧
 {
+	passMultiPathindex.clear();
 }
 
 
@@ -22,9 +23,21 @@ void Result::outResult() {
 	out << cost << endl;
 	
 	out << "--passPathIndex--" << endl;
-	for (vector<int>::iterator ite = passPathIndex.begin(); ite != passPathIndex.end(); ++ite)
-		out << *ite << " ";
-	out << endl;
+	if (!passMultiPathindex.size())
+	{
+		for (vector<int>::iterator ite = passPathIndex.begin(); ite != passPathIndex.end(); ++ite)
+			out << *ite << " ";
+		out << endl;
+	}
+	else
+	{
+		for (int i = 0; i < passMultiPathindex.size(); ++i)
+		{
+			for (int j = 0; j < passMultiPathindex[i].size(); ++j)
+				out << passMultiPathindex[i][j] << " ";
+			out << endl;
+		}
+	}
 
 	out << "--peakPerEdge--" << endl;
 	for (vector<int>::iterator ite = peakPerEdge.begin(); ite != peakPerEdge.end(); ++ite)

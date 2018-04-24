@@ -10,6 +10,7 @@ using namespace std;
 class Blrsm {
 public:
 	void schedule();
+	void optimal();
 	Blrsm(Graph topo_, RequestList requests_);
 	Result res;
 private:
@@ -28,6 +29,7 @@ private:
 	double PrUpperBound(int deep, const vector<int> &resX,int branch);
 	void gReq2One(int x);
 	void outRes();
+	void outResOpt(vector<vector<double> > passMultiPathIndex);
 
 
 	double maxValue = 0, maxRate = 0;//request

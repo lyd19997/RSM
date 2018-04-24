@@ -6,9 +6,9 @@ using namespace std;
 class Result {
 public:
 	int requestNum;
-	int receiveNum;
-	int income = 0;
-	int cost = 0;
+	double receiveNum;
+	double income = 0;
+	double cost = 0;
 	Graph topo;
 	RequestList requests;
 	string algName;
