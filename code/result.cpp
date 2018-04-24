@@ -2,7 +2,7 @@
 
 
 Result::Result(Graph topo_, RequestList requests_) :topo(topo_), requests(requests_), startTime(clock()), volPerTimeEdge(PEROID, vector<double>(topo_.getEdgeNum(), 0)),
-peakPerEdge(topo_.getEdgeNum(), 0), passPathIndex(requests.size(), -1)
+peakPerEdge(topo_.getEdgeNum(), 0), passPathIndex(requests.size(), -1), passMultiPathindex(requests_.size(), vector<int>(50, 0))//暂时就这样吧
 {
 }
 

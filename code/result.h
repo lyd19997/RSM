@@ -7,7 +7,7 @@ class Result {
 public:
 	int requestNum;
 	int receiveNum;
-	double income = 0;
+	int income = 0;
 	int cost = 0;
 	Graph topo;
 	RequestList requests;
@@ -16,7 +16,7 @@ public:
 	vector<vector<double> > volPerTimeEdge;
 	vector<int> peakPerEdge;
 	vector<int> passPathIndex;
-
+	vector<vector<int> > passMultiPathindex;
 	void outResult();
 
 	Result(Graph topo_, RequestList requests_);//≥ı ºªØvector
