@@ -46,7 +46,10 @@ RequestList::RequestList(int topoVertexSize) {
 			int pos = rand() % (topoVertexSize*(topoVertexSize - 1));
 			int src = pos / (topoVertexSize - 1);
 			int dst = pos % ((topoVertexSize - 1));
-			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, (50 + rand() % 51)*MEAN_VALUE, randomExponential(1.0)*MEAN_TRANSFER_SIZE));
+			double rate_ = randomExponential(1.0)*MEAN_TRANSFER_SIZE;
+			if (rate_ > 32) rate_ = 32;//wakaka
+			rate_ /= 4;
+			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, (50 + rand() % 51)*MEAN_VALUE, rate_));
 		}
 	}
 	ofstream out(RequestPathOut);
@@ -73,7 +76,7 @@ RequestList::RequestList(string PathIn) {
 }
 
 bool cmp(Request a, Request b) {
-	return a.value / (a.end - a.start + 1) / a.rate > b.value / (b.end - b.start + 1) / b.rate;
+	return (a.value / (a.end - a.start + 1) / a.rate) > (b.value / (b.end - b.start + 1) / b.rate);
 }
 
 void RequestList::sortRequestbyValue() {

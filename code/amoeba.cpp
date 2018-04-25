@@ -9,14 +9,15 @@ Amoeba::Amoeba(Graph topo_, RequestList requests_) :topo(topo_), requests(reques
 }
 
 vector<int> Amoeba::schedule() {
+	requests.sortRequestbyValue();
 	for (int i = 0; i < requests.size(); ++i)
 	{
 		passPathIndex[i] = pushInPath(i, remainCapacityPerEdge);
-		if (passPathIndex[i] == -1)
-		{
-			vector<int> rescheduleReq = topTenRelatedReq(i);
-			reschedule(rescheduleReq);
-		}
+		//if (passPathIndex[i] == -1)
+		//{
+		//	vector<int> rescheduleReq = topTenRelatedReq(i);
+		//	reschedule(rescheduleReq);
+		//}
 	}
 	outRes();
 	return passPathIndex;

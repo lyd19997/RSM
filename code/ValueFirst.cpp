@@ -5,7 +5,7 @@
 #include "ValueFirst.h"
 using namespace std;
 
-ValueFirst::ValueFirst(Graph &topo, RequestList &requests) : graph(topo), requests(requests),result(graph, requests){
+ValueFirst::ValueFirst(Graph &topo_, RequestList &requests_) : graph(topo_), requests(requests_),result(graph, requests){
     startTime = clock();
     VertexNum = graph.getVertexNum();
     EdgeNum = graph.getEdgeNum();

@@ -25,20 +25,13 @@ int main() {
 
 
 	//-------BL-RSM---------
-	//opt
-	//Blrsm alg(topo, requests);  
-	Amoeba alg(topo, requests);   
-	//ValueFirst alg(topo, requests);
+	//Blrsm opt(topo, requests); opt.optimal(); opt.res.outResult();
+	//Blrsm bl(topo, requests);  bl.schedule(); bl.res.outResult();
+	Amoeba am(topo, requests);   am.schedule(); am.res.outResult();
+	ValueFirst vf(topo, requests); vf.result.outResult();
 
 
 	//----------------------
-	//opt
-	//alg
-	//RsmGreedy alg(topo, requests);  
-	//alg.optimal();
-	alg.schedule();
-	alg.res.outResult();
-	//alg.result.outResult();
 	
 	return 0;
 }
