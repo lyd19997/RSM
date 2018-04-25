@@ -238,13 +238,20 @@ void MAA::pathSelecting() {
 		int start = requests[i].src, end = requests[i].dst;//int start = requests.requests[i][0], end = requests.requests[i][1];********
 		vector<vector<int>> paths = graph.Paths[start][end];
 		vector<double> pathWeight;
-		double temp = 0;
+
 		for (int j = 0; j < PrReqPath[i].size(); j++) {
-			temp += PrReqPath[i][j].get(GRB_DoubleAttr_X) * j;
+//			temp += PrReqPath[i][j].get(GRB_DoubleAttr_X) * j;
 			pathWeight.push_back(PrReqPath[i][j].get(GRB_DoubleAttr_X));
 		}
-		int index = int(round(temp));
-		printf("chose %d\n", index);
+//		int index = int(round(temp));
+//		printf("chose %d\n", index);
+		double val = (rand() % 10000) / 10000;
+		int index = 0;
+        double temp = 0;
+		for(; index < pathWeight.size(); index++){
+		    temp += pathWeight[index];
+		    if(temp >= val) break;
+		}
 		vector<int> path(paths[index]);
 		final_path.push_back(path);
 		result.passPathIndex[i] = index;
