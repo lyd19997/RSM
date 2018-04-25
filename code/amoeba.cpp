@@ -93,6 +93,7 @@ void Amoeba::reschedule(vector<int> topTen) {
 		maxRevenue += requests[*it].value;
 	}
 	vector<int> resPassPath(topTen.size(), -1);
+	int flag = 1;//debug
 	for (int set = 1; set < (1 << topTen.size()) - 1; ++set)
 	{
 		vector<vector<double> > allocate(preAllocateRemain);
@@ -110,7 +111,12 @@ void Amoeba::reschedule(vector<int> topTen) {
 		{
 			maxRevenue = revenue;
 			resPassPath = passPath;
+			flag = 0;
 		}
+	}
+	if (flag)
+	{
+		cout << "error amoeba" << endl; while (1);
 	}
 	for (vector<int>::iterator it = topTen.begin(); it != topTen.end(); ++it)
 		passPathIndex[*it] = resPassPath[it - topTen.begin()];

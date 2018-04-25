@@ -22,8 +22,8 @@
 #define MEAN_TRANSFER_SIZE 20
 #define MEAN_VALUE 1
 //--------topo---------
-#define VERTEXSIZE 5
-#define EDGESIZE 8
+#define VERTEXSIZE 2
+#define EDGESIZE 1
 #define MaxVertexNum 30
 #define MaxBandwidth 3000
 #define MaxBandwidthPrice 10

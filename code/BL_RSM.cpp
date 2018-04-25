@@ -48,12 +48,27 @@ void Blrsm::schedule() {
 	passPathIndex = TAA();
 	gReq2One(1);
 	outRes();
+	//for (int i = 0; i < Pr_ij.size(); ++i)                      //debug
+	//{
+	//	for (int j = 0; j < Pr_ij[i].size(); ++j)
+	//	{
+	//		Fs += Pr_ij[i][j] * requests[i].value;
+	//	}
+	//}
+	//cout <<delta[0]<<" "<<res.income<<"  "<< Fs << endl;
 }
 
 void Blrsm::optimal() {
 	vector<vector<double> > passMultiPathIndex = relaxation_LP();
 	gReq2One(1);
+	//int cnt = 0;
+	//for (int i = 0; i < passMultiPathIndex.size(); ++i)
+	//	for (int j = 0; j < passMultiPathIndex[i].size(); ++j)
+	//		if (passMultiPathIndex[i][j] == 1)
+	//			++cnt;
 	outResOpt(passMultiPathIndex);
+	//cout << cnt << endl;
+	//while (1);
 }
 
 vector<int> Blrsm::TAA() {
@@ -75,7 +90,7 @@ vector<int> Blrsm::TAA() {
 	double left = 0, right = 1;
 	double mid = (left + right) / 2;
 	double bound = -1 * log(topo.getEdgeNum() + 1) / Fs;//¾«¶È
-	cout << DELTA0(1) << endl;//debug
+	//cout << DELTA0(1) << endl;//debug
 	while ((bound - DELTA0(mid) > EPS || bound < DELTA0(mid)) && !(cnt--<0 && bound>DELTA0(mid))) {
 		if (bound < DELTA0(mid))
 			left = mid;
@@ -94,11 +109,7 @@ vector<int> Blrsm::TAA() {
 		for (int j = topo.pathSize(requests[i].getSrcDst()) - 1; j >= -1; --j)
 		{
 			if (j >= 0 && !x_ij[i][j]) continue;
-			//if (j >= 0 && x_ij[i][j] == 1)
-			//{
-			//	resX[i] = j;
-			//	break;
-			//}
+
 			double tmpPr = PrUpperBound(i, resX, j);
 			if (tmpPr < minPr)
 			{

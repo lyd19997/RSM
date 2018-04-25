@@ -26,8 +26,8 @@ int main() {
 
 	//-------BL-RSM---------
 	//opt
-	Blrsm alg(topo, requests);  
-	//Amoeba alg(topo, requests);   
+	//Blrsm alg(topo, requests);  
+	Amoeba alg(topo, requests);   
 	//ValueFirst alg(topo, requests);
 
 
@@ -35,6 +35,7 @@ int main() {
 	//opt
 	//alg
 	//RsmGreedy alg(topo, requests);  
+	//alg.optimal();
 	alg.schedule();
 	alg.res.outResult();
 	//alg.result.outResult();
