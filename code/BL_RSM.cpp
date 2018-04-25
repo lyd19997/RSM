@@ -61,12 +61,12 @@ void Blrsm::schedule() {
 void Blrsm::optimal() {
 	vector<vector<double> > passMultiPathIndex = relaxation_LP();
 	gReq2One(1);
+	outResOpt(passMultiPathIndex);
 	//int cnt = 0;
 	//for (int i = 0; i < passMultiPathIndex.size(); ++i)
 	//	for (int j = 0; j < passMultiPathIndex[i].size(); ++j)
 	//		if (passMultiPathIndex[i][j] == 1)
 	//			++cnt;
-	outResOpt(passMultiPathIndex);
 	//cout << cnt << endl;
 	//while (1);
 }
@@ -102,7 +102,20 @@ vector<int> Blrsm::TAA() {
 			cout << "calc error in  delta0" << endl;
 	}
 	delta[0] = mid;
-
+	//------------bound-----------
+	double E = 0, opt = 0;
+	for (int i = 0; i < x_ij.size(); ++i)                      //init Pr 
+	{
+		for (int j = 0; j < x_ij[i].size(); ++j)
+		{
+			E += Pr_ij[i][j] * requests[i].value *maxValue;
+			opt += x_ij[i][j] * requests[i].value *maxValue;;
+		}
+	}
+	cout << E << " " << 1 - delta[0] << " -> " << E*(1 - delta[0]) << endl;
+	cout << opt << " " << E << " " << (E / opt) << endl;
+	system("pause");
+	//-------------
 	for (int i = 0; i < requests.size(); ++i)
 	{
 		double minPr = 1;

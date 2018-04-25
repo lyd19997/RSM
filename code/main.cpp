@@ -25,13 +25,13 @@ int main() {
 
 
 	//-------BL-RSM---------
-	//Blrsm opt(topo, requests); opt.optimal(); opt.res.outResult();
-	//Blrsm bl(topo, requests);  bl.schedule(); bl.res.outResult();
 	Amoeba am(topo, requests);   am.schedule(); am.res.outResult();
-	ValueFirst vf(topo, requests); vf.result.outResult();
+	Blrsm opt(topo, requests); opt.optimal(); opt.res.outResult();
+	Blrsm bl(topo, requests);  bl.schedule(); bl.res.outResult();	
+	//ValueFirst vf(topo, requests); vf.result.outResult();
 
 
-	//----------------------
+	//---------RSM------------
 	
 	return 0;
 }

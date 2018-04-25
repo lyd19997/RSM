@@ -9,15 +9,16 @@ Amoeba::Amoeba(Graph topo_, RequestList requests_) :topo(topo_), requests(reques
 }
 
 vector<int> Amoeba::schedule() {
-	requests.sortRequestbyValue();
+	//requests.sortRequestbyValue();
 	for (int i = 0; i < requests.size(); ++i)
 	{
+		cout << "push " << i << endl;
 		passPathIndex[i] = pushInPath(i, remainCapacityPerEdge);
-		//if (passPathIndex[i] == -1)
-		//{
-		//	vector<int> rescheduleReq = topTenRelatedReq(i);
-		//	reschedule(rescheduleReq);
-		//}
+		if (passPathIndex[i] == -1)
+		{
+			vector<int> rescheduleReq = topTenRelatedReq(i);
+			reschedule(rescheduleReq);
+		}
 	}
 	outRes();
 	return passPathIndex;
@@ -39,7 +40,10 @@ int Amoeba::pushInPath(int indexReq, vector<vector<double>> &remainCapacityPerEd
 		{
 			for (int t = requests[indexReq].start; t <= requests[indexReq].end; ++t)
 				for (it = edgeList.begin(); it != edgeList.end(); ++it)
+				{
 					remainCapacityPerEdge[t][*it] -= requests[indexReq].rate;
+					if (remainCapacityPerEdge[t][*it] < 0) { cout << "error pushinpath" << endl; while (1); }//debug
+				}
 			return i;
 		}
 	}
@@ -95,7 +99,7 @@ void Amoeba::reschedule(vector<int> topTen) {
 	}
 	vector<int> resPassPath(topTen.size(), -1);
 	int flag = 1;//debug
-	for (int set = 1; set < (1 << topTen.size()) - 1; ++set)
+	for (int set = 511; set < (1 << topTen.size()) - 1; ++set)
 	{
 		vector<vector<double> > allocate(preAllocateRemain);
 		double revenue = 0;
@@ -108,16 +112,26 @@ void Amoeba::reschedule(vector<int> topTen) {
 				revenue += (passPath[i] == -1 ? 0 : requests[topTen[i]].value);
 			}
 		}
+		if (set == 511 && revenue != maxRevenue)
+			cout << "??" << endl;
+		if (revenue > maxRevenue)
+			cout << ".." << endl;
 		if (revenue >= maxRevenue)
 		{
 			maxRevenue = revenue;
 			resPassPath = passPath;
+			//remainCapacityPerEdge = allocate;
+			remainCapacityPerEdge.clear();
+			for (int i = 0; i < allocate.size(); ++i)
+				remainCapacityPerEdge.push_back(allocate[i]);
 			flag = 0;
 		}
 	}
 	if (flag)
 	{
-		cout << "error amoeba" << endl; while (1);
+		cout << "error amoeba" << endl; 
+		cout << maxRevenue << endl;
+		while (1);
 	}
 	for (vector<int>::iterator it = topTen.begin(); it != topTen.end(); ++it)
 		passPathIndex[*it] = resPassPath[it - topTen.begin()];
