@@ -153,8 +153,7 @@ bool SRM::linearSolver() {
         for (int j = 0; j < VertexNum; j++) {
             if (graph.G[i][j]) {
                 cout << i << " " << j << " " << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << "\n";
-                opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(ceil(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X)));
-//                result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
+                opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  (ceil(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X)));
                 graph.BandwidthLim[i][j] = ceil(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X));//????????????????
 				//cout << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << endl;
             }
@@ -166,7 +165,38 @@ bool SRM::linearSolver() {
         }
     }
     cout << "A - B " << model.get(GRB_DoubleAttr_ObjVal) << "\n";
+	//-----------------opt result------------------
 	opt.income = (model.get(GRB_DoubleAttr_ObjVal));
+	for (int i = 0; i < requests.size(); ++i)
+		for (int j = 0; j < PrReqPath.size() - 1; ++j)   // size - 1 
+			opt.receiveNum += PrReqPath[i][j].get(GRB_DoubleAttr_X);
+
+	opt.cost = 0;
+	for (int e = 0; e < graph.getEdgeNum(); ++e)
+		opt.cost += opt.peakPerEdge[e] * graph.BandwidthPrice[graph.findSrcDst(e).first][graph.findSrcDst(e).second];
+	opt.income += opt.cost;
+	opt.getRunTime();
+	
+	for (int i = 0; i < requests.size(); ++i)
+	{
+		opt.passMultiPathindex.push_back(vector<double>());
+		for (int j = 0; j < PrReqPath.size() - 1; ++j)
+			opt.passMultiPathindex[i].push_back(PrReqPath[i][j].get(GRB_DoubleAttr_X));
+	}
+	
+	for (int i = 0; i < requests.size(); ++i)
+	{
+		for (int j = 0; j < opt.passMultiPathindex[i].size(); ++j)
+		{
+			if (opt.passMultiPathindex[i][j] == 0) continue;
+			vector<int> edgeList = graph.getPath(requests[i].getSrcDst(), j);
+			for (vector<int>::iterator ite = edgeList.begin(); ite != edgeList.end(); ++ite)
+			{
+				for (int t = requests[i].start; t <= requests[i].end; ++t)
+					opt.volPerTimeEdge[t][*ite] += requests[i].rate*opt.passMultiPathindex[i][j];
+			}
+		}
+	}
     return true;
 }
 
@@ -181,7 +211,11 @@ void SRM::TAASolver() {
     result.receiveNum = alg.res.receiveNum;
     result.requestNum = alg.res.requestNum;
     result.income = alg.res.income;
-    result.cost = alg.res.cost;
+	//----------rsm cost----------
+	result.cost = 0;
+	for (int e = 0; e < graph.getEdgeNum(); ++e)
+		result.cost += result.peakPerEdge[e] * graph.BandwidthPrice[graph.findSrcDst(e).first][graph.findSrcDst(e).second];
+	//-------------------
     for(int i = 0; i < requestsNum; i++){
         if(passPathIndex[i] == -1){
             cout <<"add "<< ADD(i) << endl;
@@ -323,4 +357,4 @@ int SRM::calCost(vector<int> &peakPerEdge, vector<vector<double> > &volPerTimeEd
 
 
 // opt result
-// rsm cost
+// --rsm cost
