@@ -36,6 +36,8 @@ public:
     Result opt;
     clock_t startTime;
 
+    vector<int> passPathIndex;
+
 
     SRM(Graph &topo, RequestList &requests);
     void schedule();
@@ -45,6 +47,12 @@ public:
     void addConstraints();
     void setObj();
     bool linearSolver();
+    bool ADD(int reqIndex);
+    bool DEL(int reqIndex);
+    bool CHA(int reqIndex);
+    int calCost(vector<int>& peakPerEdge, vector<vector<double> >& volPerTimeEdge);
+
+    void TAASolver();
 
     int getEdgeBandwidthUsage(int src, int dst, int time); //获取t时刻边(src->dst)的带宽利用
     void outOpt();

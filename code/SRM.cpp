@@ -37,6 +37,7 @@ void SRM::schedule() {
     addConstraints();
     setObj();
     linearSolver();
+    TAASolver();
 }
 
 void SRM::PrReqPath_init() {
@@ -155,7 +156,7 @@ bool SRM::linearSolver() {
             if (graph.G[i][j]) {
                 cout << i << " " << j << " " << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << "\n";
                 opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
-                result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
+//                result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
                 graph.BandwidthLim[i][j] = int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
             }
         }
@@ -170,13 +171,151 @@ bool SRM::linearSolver() {
     return true;
 }
 
-int SRM::getEdgeBandwidthUsage(int src, int dst, int time) {
-    return 0;
+void SRM::TAASolver() {
+    Blrsm alg(graph, requests);
+    alg.schedule();
+    passPathIndex = alg.res.passPathIndex;
+    result.peakPerEdge = alg.res.peakPerEdge;
+    result.volPerTimeEdge = alg.res.volPerTimeEdge;
+    result.receiveNum = alg.res.receiveNum;
+    result.requestNum = alg.res.requestNum;
+    result.income = alg.res.income;
+    result.cost = alg.res.cost;
+    for(int i = 0; i < requestsNum; i++){
+        if(passPathIndex[i] == -1){
+            cout <<"add "<< ADD(i) << endl;
+        }else{
+            if(!CHA(i)){
+                cout <<"del "<< DEL(i) << endl;
+            }
+        }
+    }
+
 }
 
 
 void SRM::outOpt() {
 
 }
+
+bool SRM::ADD(int reqIndex) {
+    int src = requests[reqIndex].src, dst = requests[reqIndex].dst;
+    int start = requests[reqIndex].start, end = requests[reqIndex].end;
+    vector<vector<int>> paths = graph.Paths[src][dst];
+    for(int j = 0; j < paths.size(); j++){
+        vector<vector<double> > volPerTimeEdge(result.volPerTimeEdge);
+        vector<int> peakPerEdge(result.peakPerEdge);
+        for(int p = 0; p < paths[j].size() - 1; p++){
+            int e_s = paths[j][p], e_d = paths[j][p + 1];
+            int e_index = graph.getEdgeIndex(pair<int, int>(e_s, e_d));
+            for(int t = start; t <= end; t++){
+                volPerTimeEdge[t][e_index] += requests[reqIndex].rate;
+            }
+        }
+        double cost = calCost(peakPerEdge, volPerTimeEdge);
+        if(requests[reqIndex].value - cost > 0){
+            result.volPerTimeEdge = volPerTimeEdge;
+            result.peakPerEdge = peakPerEdge;
+            result.passPathIndex[reqIndex] = j;
+            result.receiveNum += 1;
+            result.income += requests[reqIndex].value;
+            result.cost += cost;
+            return true;
+        }else{
+            volPerTimeEdge.clear();
+            peakPerEdge.clear();
+        }
+    }
+    return false;
+}
+
+bool SRM::DEL(int reqIndex) {
+    int src = requests[reqIndex].src, dst = requests[reqIndex].dst;
+    int start = requests[reqIndex].start, end = requests[reqIndex].end;
+    int pathChoose = result.passPathIndex[reqIndex];
+    vector<vector<int>> paths = graph.Paths[src][dst];
+    vector<vector<double> > volPerTimeEdge(result.volPerTimeEdge);
+    vector<int> peakPerEdge(result.peakPerEdge);
+    for(int p = 0; p < paths[pathChoose].size() - 1; p++){
+        int e_s = paths[pathChoose][p], e_d = paths[pathChoose][p + 1];
+        int e_index = graph.getEdgeIndex(pair<int, int>(e_s, e_d));
+        for(int t = start; t <= end; t++){
+            volPerTimeEdge[t][e_index] -= requests[reqIndex].rate;
+        }
+    }
+    double cost = calCost(peakPerEdge, volPerTimeEdge);
+    if(-requests[reqIndex].value - cost > 0){
+        result.volPerTimeEdge = volPerTimeEdge;
+        result.peakPerEdge = peakPerEdge;
+        result.passPathIndex[reqIndex] = -1;
+        result.receiveNum -= 1;
+        result.income -= requests[reqIndex].value;
+        result.cost += cost;
+        return true;
+    }else{
+        volPerTimeEdge.clear();
+        peakPerEdge.clear();
+        return false;
+    }
+}
+
+bool SRM::CHA(int reqIndex) {
+    int src = requests[reqIndex].src, dst = requests[reqIndex].dst;
+    int start = requests[reqIndex].start, end = requests[reqIndex].end;
+    vector<vector<int>> paths = graph.Paths[src][dst];
+    int pathChoose = result.passPathIndex[reqIndex];
+    vector<vector<double> > volPerTimeEdge(result.volPerTimeEdge);
+    vector<int> peakPerEdge(result.peakPerEdge);
+    for(int p = 0; p < paths[pathChoose].size() - 1; p++){
+        int e_s = paths[pathChoose][p], e_d = paths[pathChoose][p + 1];
+        int e_index = graph.getEdgeIndex(pair<int, int>(e_s, e_d));
+        for(int t = start; t <= end; t++){
+            volPerTimeEdge[t][e_index] -= requests[reqIndex].rate;
+        }
+    }
+    for(int j = 0; j < paths.size(); j++){
+        if(j == pathChoose) continue;
+        vector<vector<double> > volPerTimeEdge_(volPerTimeEdge);
+        vector<int> peakPerEdge_(peakPerEdge);
+        for(int p = 0; p < paths[j].size() - 1; p++){
+            int e_s = paths[j][p], e_d = paths[j][p + 1];
+            int e_index = graph.getEdgeIndex(pair<int, int>(e_s, e_d));
+            for(int t = start; t <= end; t++){
+                volPerTimeEdge_[t][e_index] += requests[reqIndex].rate;
+            }
+        }
+        double cost = calCost(peakPerEdge_, volPerTimeEdge_);
+        if(cost < 0){
+            result.volPerTimeEdge = volPerTimeEdge_;
+            result.peakPerEdge = peakPerEdge_;
+            result.passPathIndex[reqIndex] = j;
+            result.cost += cost;
+            return true;
+        }else{
+            volPerTimeEdge_.clear();
+            peakPerEdge_.clear();
+        }
+    }
+    return false;
+}
+
+int SRM::calCost(vector<int> &peakPerEdge, vector<vector<double> > &volPerTimeEdge) {
+    int postCost = 0, fuCost = 0;
+    for(int e = 0; e < peakPerEdge.size(); e++){
+        pair<int, int> srcDst = graph.findSrcDst(e);
+        postCost += peakPerEdge[e] * graph.BandwidthPrice[srcDst.first][srcDst.second];
+        double max = 0;
+        for(int t = 0; t < volPerTimeEdge.size(); t++){
+            if (volPerTimeEdge[t][e] > max){
+                max = volPerTimeEdge[t][e];
+            }
+        }
+        peakPerEdge[e] = int(max + 0.5);
+        fuCost += peakPerEdge[e] * graph.BandwidthPrice[srcDst.first][srcDst.second];
+    }
+
+    return fuCost - postCost;
+}
+
 
 
