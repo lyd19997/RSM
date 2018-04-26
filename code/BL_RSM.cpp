@@ -118,7 +118,7 @@ vector<int> Blrsm::TAA() {
 	}
 	cout << E << " " << 1 - delta[0] << " -> " << E*(1 - delta[0]) << endl;
 	cout << opt << " " << E << " " << (E / opt) << " p: " << (E / opt)*(1 - delta[0]) << endl;
-	system("pause");
+	//system("pause");
 	//-------------
 	for (int i = 0; i < requests.size(); ++i)
 	{
@@ -162,6 +162,8 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 	double debug = 0;
 	for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][N]
 	{
+		if (!topo.linkCapacity(k%topo.getEdgeNum()))
+			continue;
 		double sumCapacity = 0;
 		for (int i = 0; i < deep; ++i)          // < deep
 			sumCapacity += requests[i].rate*((k / topo.getEdgeNum()<requests[i].start || k / topo.getEdgeNum()>requests[i].end) ? 0 : 1)
@@ -184,13 +186,7 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 		}
 		res_ += powl(1 + delta[k%topo.getEdgeNum()+1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
 		debug += powl(1 + delta[k%topo.getEdgeNum() + 1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
-		//cout << res_<<" "<< prod << " " << powl(1 + delta[k%topo.getEdgeNum()+1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum())) 
-		//	<<" "<< sumCapacity <<"  "<< topo.linkCapacity(k%topo.getEdgeNum()) << endl;//debug
-		/*if (res_ > 1)
-			cout << k%topo.getEdgeNum() <<" ?? "<< topo.linkCapacity(k%topo.getEdgeNum()) << endl;*/
 	}
-	//cout << debug << "--"<< endl;
-	//if (res_ > 1)
 		cout <</* branch<<"  "<<*/res_ << endl;//debug
 	return res_;
 }
@@ -215,14 +211,11 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 		{
 			for (int e = 0; e < topo.getEdgeNum(); ++e)
 			{
-				//cout << e << "  " << topo.findSrcDst(e).first << "--" << topo.findSrcDst(e).second << endl;
 				GRBLinExpr lhsExpr = 0;
 				for (int i = 0; i < requests.size(); ++i)
 				{
 					for (int j = addr[i]; j < addr[i + 1]; ++j)
 					{
-						//if (topo.findSrcDst(e) == pair<int, int>(0, 6) || topo.findSrcDst(e) == pair<int, int>(6, 0))
-						//	cout << e << "  " << requests[i].src << "  " << requests[i].dst << "  " << j - addr[i] << endl;
 						if (!(t < requests[i].start || t > requests[i].end) && topo.linkInPath(e, requests[i].getSrcDst(), j - addr[i]))
 						{
 							//cout << "in" << endl;
@@ -232,6 +225,7 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 				}
 				//cout << topo.linkCapacity(k%topo.getEdgeNum()) << std::endl;//debug
 				model.addConstr(lhsExpr, GRB_LESS_EQUAL, topo.linkCapacity(e)); // constrain 2
+				cout << topo.linkCapacity(e) << endl;
 			}
 		}
 		GRBLinExpr obj = 0;
