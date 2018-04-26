@@ -163,7 +163,7 @@ ValueFirst::ValueFirst(Graph topo_, RequestList requests_) :topo(topo_), request
 }
 
 vector<int> ValueFirst::schedule() {
-	requests.sortRequestbyValue();
+	//requests.sortRequestbyValue();
 	for (int i = 0; i < requests.size(); ++i)
 	{
 		//cout << "push " << i << endl;
@@ -200,7 +200,7 @@ int ValueFirst::pushInPath(int indexReq, vector<vector<double>> &remainCapacityP
 }
 
 void ValueFirst::outRes() {
-	res.algName = "Amoeba";
+	res.algName = "ValueFirst";
 	res.cost = 0;
 	res.income = 0;
 	res.receiveNum = 0;

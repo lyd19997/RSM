@@ -42,7 +42,7 @@ int Amoeba::pushInPath(int indexReq, vector<vector<double>> &remainCapacityPerEd
 				for (it = edgeList.begin(); it != edgeList.end(); ++it)
 				{
 					remainCapacityPerEdge[t][*it] -= requests[indexReq].rate;
-					if (remainCapacityPerEdge[t][*it] < 0) { cout << "error pushinpath" << endl; while (1); }//debug
+					//if (remainCapacityPerEdge[t][*it] < 0) { cout << "error pushinpath" << endl; while (1); }//debug
 				}
 			return i;
 		}
@@ -86,20 +86,20 @@ vector<int> Amoeba::topTenRelatedReq(int indexReq) {
 
 void Amoeba::reschedule(vector<int> topTen) {
 	double maxRevenue = 0;
-	map<int, int> passPath;
 	vector<vector<double> > preAllocateRemain(remainCapacityPerEdge);
 	for (vector<int>::iterator it = topTen.begin(); it != topTen.end(); ++it)
 	{
+		//cout << passPathIndex[*it] << endl;
 		if (passPathIndex[*it] == -1) continue;
 		vector<int> edgeList = topo.getPath(requests[*it].getSrcDst(), passPathIndex[*it]);
 		for (int t = requests[*it].start; t <= requests[*it].end; ++t)
 			for (vector<int>::iterator ite = edgeList.begin(); ite != edgeList.end(); ++ite)
-				preAllocateRemain[t][*ite] += requests[*it].rate;
+				preAllocateRemain[t][*ite] += requests[*it].rate;// , preAllocateRemain[t][*ite] -= requests[*it].rate;
 		maxRevenue += requests[*it].value;
 	}
 	vector<int> resPassPath(topTen.size(), -1);
-	int flag = 1;//debug
-	for (int set = 511; set < (1 << topTen.size()) - 1; ++set)
+	int flag = 0;
+	for (int set = 1; set < (1 << topTen.size()) - 1; ++set)
 	{
 		vector<vector<double> > allocate(preAllocateRemain);
 		double revenue = 0;
@@ -112,29 +112,19 @@ void Amoeba::reschedule(vector<int> topTen) {
 				revenue += (passPath[i] == -1 ? 0 : requests[topTen[i]].value);
 			}
 		}
-		if (set == 511 && revenue != maxRevenue)
-			cout << "??" << endl;
 		if (revenue > maxRevenue)
-			cout << ".." << endl;
-		if (revenue >= maxRevenue)
 		{
+			flag = 1;
 			maxRevenue = revenue;
 			resPassPath = passPath;
-			//remainCapacityPerEdge = allocate;
-			remainCapacityPerEdge.clear();
-			for (int i = 0; i < allocate.size(); ++i)
-				remainCapacityPerEdge.push_back(allocate[i]);
-			flag = 0;
+			remainCapacityPerEdge = allocate;
 		}
 	}
 	if (flag)
 	{
-		cout << "error amoeba" << endl; 
-		cout << maxRevenue << endl;
-		while (1);
+		for (vector<int>::iterator it = topTen.begin(); it != topTen.end(); ++it)
+			passPathIndex[*it] = resPassPath[it - topTen.begin()];
 	}
-	for (vector<int>::iterator it = topTen.begin(); it != topTen.end(); ++it)
-		passPathIndex[*it] = resPassPath[it - topTen.begin()];
 }
 
 void Amoeba::outRes() {

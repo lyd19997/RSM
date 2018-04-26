@@ -14,11 +14,11 @@
 #define EPS 1e-5
 #define INF 0xfffffff
 //-------ISP--------
-#define PEROID 50
-#define MaxTime 50
+#define PEROID 10
+#define MaxTime 10
 //-------request---------
 #define MIN_DURATION 2
-#define LAMBDA 30
+#define LAMBDA 50
 #define MEAN_TRANSFER_SIZE 20
 #define MEAN_VALUE 1
 //--------topo---------

@@ -18,6 +18,7 @@ Blrsm::Blrsm(Graph topo_, RequestList requests_) :topo(topo_), requests(requests
 		int cnt = 100;
 		double left = 0, right = 1;
 		double mid = (left + right) / 2;
+		//cout << SCALING(0.5) << endl;
 		//cout << powl(PEROID*(topo.getEdgeNum() + 1), -1 / (double)topo.linkCapacity(i)) <<"   "<< topo.linkCapacity(i) << endl;//debug
 		double bound = exp(-1)*powl(PEROID*(topo.getEdgeNum() + 1), -1 / (double)topo.linkCapacity(i));//精度
 		while ((bound - SCALING(mid) > EPS || bound < SCALING(mid)) && !(cnt--<0 && bound>SCALING(mid))) {
@@ -80,7 +81,10 @@ vector<int> Blrsm::TAA() {
 		Pr_ij.push_back(vector<double>(x_ij[i].size(), 0));
 		for (int j = 0; j < x_ij[i].size(); ++j) 
 		{
-			Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j)];//...pathCapacityEdgeIndex
+			//if (x_ij[i][j] == 1)
+			//	Pr_ij.back()[j] = x_ij[i][j];
+			//else
+				Pr_ij.back()[j] = x_ij[i][j] * scaling[topo.pathCapacityEdgeIndex(requests[i].getSrcDst(), j)];//...pathCapacityEdgeIndex
 			Fs += Pr_ij.back()[j] * requests[i].value;
 		}
 	}
@@ -90,7 +94,7 @@ vector<int> Blrsm::TAA() {
 	double left = 0, right = 1;
 	double mid = (left + right) / 2;
 	double bound = -1 * log(topo.getEdgeNum() + 1) / Fs;//精度
-	//cout << DELTA0(1) << endl;//debug
+	cout << DELTA0(1) << endl;//debug
 	while ((bound - DELTA0(mid) > EPS || bound < DELTA0(mid)) && !(cnt--<0 && bound>DELTA0(mid))) {
 		if (bound < DELTA0(mid))
 			left = mid;
@@ -113,7 +117,7 @@ vector<int> Blrsm::TAA() {
 		}
 	}
 	cout << E << " " << 1 - delta[0] << " -> " << E*(1 - delta[0]) << endl;
-	cout << opt << " " << E << " " << (E / opt) << endl;
+	cout << opt << " " << E << " " << (E / opt) << " p: " << (E / opt)*(1 - delta[0]) << endl;
 	system("pause");
 	//-------------
 	for (int i = 0; i < requests.size(); ++i)
