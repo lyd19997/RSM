@@ -130,7 +130,7 @@ void MinCost::pathSelecting() {
 void MinCost::bandwidthCal() {
     for(int s = 0; s < VertexNum; s++){
         for(int d = 0; d < VertexNum; d++){
-            final_bandwidth[s][d] = int (peekBandwidth[s][d] + 0.5);
+            final_bandwidth[s][d] = int(ceil(peekBandwidth[s][d]));
 
         }
     }

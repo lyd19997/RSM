@@ -129,7 +129,7 @@ bool MAA::linearSolver() {
 		for (int j = 0; j < VertexNum; j++) {
 			if (graph.G[i][j]) {
 				cout << i << " " << j << " " << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << "\n";
-				opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
+				opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(ceil(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X)));
 			}
 		}
 	}
@@ -139,7 +139,7 @@ bool MAA::linearSolver() {
 		}
 	}
 	cout << "B " << model.get(GRB_DoubleAttr_ObjVal) << "\n";
-    opt.cost = int(model.get(GRB_DoubleAttr_ObjVal) + 0.5);
+    opt.cost = int(ceil(model.get(GRB_DoubleAttr_ObjVal)));
 	return true;
 }
 
@@ -245,7 +245,7 @@ void MAA::pathSelecting() {
 		}
 //		int index = int(round(temp));
 //		printf("chose %d\n", index);
-		double val = (rand() % 10000) / 10000;
+		double val = (rand() % 10000) * 1.0 / 10000;
 		int index = 0;
         double temp = 0;
 		for(; index < pathWeight.size(); index++){
@@ -272,8 +272,8 @@ void MAA::bandwidthRounding() {
 			}
 
 			if(graph.G[s][d]){
-                final_bandwidth[s][d] = int (maxBand + 0.5);
-                result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int (maxBand + 0.5);
+                final_bandwidth[s][d] = int(ceil(maxBand));
+                result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int(ceil(maxBand));
 			}
 		}
 	}

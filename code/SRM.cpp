@@ -153,7 +153,7 @@ bool SRM::linearSolver() {
         for (int j = 0; j < VertexNum; j++) {
             if (graph.G[i][j]) {
                 cout << i << " " << j << " " << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << "\n";
-                opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
+                opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(ceil(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X)));
 //                result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
                 graph.BandwidthLim[i][j] = ceil(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X));//????????????????
 				//cout << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << endl;

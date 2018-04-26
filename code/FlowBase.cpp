@@ -176,8 +176,8 @@ void FlowBase::bandwidthCal() {
                     maxBand = bandwidthTime[t][s][d];
                 }
             }
-            final_bandwidth[s][d] = int (maxBand + 0.5);
-            result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int (maxBand + 0.5);
+            final_bandwidth[s][d] = int(ceil(maxBand));
+            result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(s, d))] = int(ceil(maxBand));
         }
     }
 }
