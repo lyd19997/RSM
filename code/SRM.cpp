@@ -22,10 +22,8 @@ SRM::SRM(Graph &topo, RequestList &requests):graph(topo),requests(requests), mod
         }
     }
     result.requestNum = requests.size();
-    result.receiveNum = requests.size();
     result.algName = "SRM";
     opt.requestNum = requests.size();
-    opt.receiveNum = requests.size();
     opt.algName = "SRM-OPT";
     schedule();
 }
@@ -157,7 +155,7 @@ bool SRM::linearSolver() {
                 cout << i << " " << j << " " << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << "\n";
                 opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
 //                result.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
-                graph.BandwidthLim[i][j] = int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
+                graph.Bandwidth[i][j] = int(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) + 0.5);
             }
         }
     }
@@ -174,7 +172,9 @@ bool SRM::linearSolver() {
 void SRM::TAASolver() {
     Blrsm alg(graph, requests);
     alg.schedule();
+    alg.res.outResult();
     passPathIndex = alg.res.passPathIndex;
+    result.passPathIndex = alg.res.passPathIndex;
     result.peakPerEdge = alg.res.peakPerEdge;
     result.volPerTimeEdge = alg.res.volPerTimeEdge;
     result.receiveNum = alg.res.receiveNum;
@@ -201,7 +201,7 @@ void SRM::outOpt() {
 bool SRM::ADD(int reqIndex) {
     int src = requests[reqIndex].src, dst = requests[reqIndex].dst;
     int start = requests[reqIndex].start, end = requests[reqIndex].end;
-    vector<vector<int>> paths = graph.Paths[src][dst];
+    vector<vector<int>> paths(graph.Paths[src][dst]);
     for(int j = 0; j < paths.size(); j++){
         vector<vector<double> > volPerTimeEdge(result.volPerTimeEdge);
         vector<int> peakPerEdge(result.peakPerEdge);
@@ -233,7 +233,7 @@ bool SRM::DEL(int reqIndex) {
     int src = requests[reqIndex].src, dst = requests[reqIndex].dst;
     int start = requests[reqIndex].start, end = requests[reqIndex].end;
     int pathChoose = result.passPathIndex[reqIndex];
-    vector<vector<int>> paths = graph.Paths[src][dst];
+    vector<vector<int>> paths(graph.Paths[src][dst]);
     vector<vector<double> > volPerTimeEdge(result.volPerTimeEdge);
     vector<int> peakPerEdge(result.peakPerEdge);
     for(int p = 0; p < paths[pathChoose].size() - 1; p++){
@@ -262,7 +262,7 @@ bool SRM::DEL(int reqIndex) {
 bool SRM::CHA(int reqIndex) {
     int src = requests[reqIndex].src, dst = requests[reqIndex].dst;
     int start = requests[reqIndex].start, end = requests[reqIndex].end;
-    vector<vector<int>> paths = graph.Paths[src][dst];
+    vector<vector<int>> paths(graph.Paths[src][dst]);
     int pathChoose = result.passPathIndex[reqIndex];
     vector<vector<double> > volPerTimeEdge(result.volPerTimeEdge);
     vector<int> peakPerEdge(result.peakPerEdge);
