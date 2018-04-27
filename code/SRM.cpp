@@ -153,7 +153,7 @@ bool SRM::linearSolver() {
         for (int j = 0; j < VertexNum; j++) {
             if (graph.G[i][j]) {
                 cout << i << " " << j << " " << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << "\n";
-                opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  (ceil(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X)));
+                opt.peakPerEdge[graph.getEdgeIndex(pair<int, int>(i, j))] =  int (ceil(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X)));
                 graph.BandwidthLim[i][j] = ceil(bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X));//????????????????
 				//cout << bandwidthSrcToDst[i][j].get(GRB_DoubleAttr_X) << endl;
             }
@@ -168,7 +168,7 @@ bool SRM::linearSolver() {
 	//-----------------opt result------------------
 	opt.income = (model.get(GRB_DoubleAttr_ObjVal));
 	for (int i = 0; i < requests.size(); ++i)
-		for (int j = 0; j < PrReqPath.size() - 1; ++j)   // size - 1 
+		for (int j = 0; j < PrReqPath[i].size() - 1; ++j)   // size - 1
 			opt.receiveNum += PrReqPath[i][j].get(GRB_DoubleAttr_X);
 
 	opt.cost = 0;
@@ -180,7 +180,7 @@ bool SRM::linearSolver() {
 	for (int i = 0; i < requests.size(); ++i)
 	{
 		opt.passMultiPathindex.push_back(vector<double>());
-		for (int j = 0; j < PrReqPath.size() - 1; ++j)
+		for (int j = 0; j < PrReqPath[i].size() - 1; ++j)
 			opt.passMultiPathindex[i].push_back(PrReqPath[i][j].get(GRB_DoubleAttr_X));
 	}
 	
@@ -347,7 +347,7 @@ int SRM::calCost(vector<int> &peakPerEdge, vector<vector<double> > &volPerTimeEd
                 max = volPerTimeEdge[t][e];
             }
         }
-        peakPerEdge[e] = ceil(max);
+        peakPerEdge[e] = int (ceil(max));
         fuCost += peakPerEdge[e] * graph.BandwidthPrice[srcDst.first][srcDst.second];
     }
 
