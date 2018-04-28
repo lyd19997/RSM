@@ -28,6 +28,9 @@
 #define MaxBandwidth 3000
 #define MaxBandwidthPrice 10
 #define BANDWIDTH_CAPACITY 30
+
+#define THRESHOLDVALUE 50
+#define EPOCHNUM 5
 //-------path--------------
 const std::string Path = "C:\\data\\";
 
