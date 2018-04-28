@@ -103,7 +103,7 @@ vector<int> Blrsm::TAA() {
 		mid = (right + left) / 2;
 		//cout << cnt << endl;//debug
 		if (cnt < -100)
-			cout << "calc error in  delta0" << endl;
+			cout << bound <<" error delta0 "<<DELTA0(1)<< endl;
 	}
 	delta[0] = mid;
 	//------------bound-----------
@@ -136,6 +136,20 @@ vector<int> Blrsm::TAA() {
 		}
 		cout << i << " : " << resX[i] << "   " << minPr << endl;
 	}
+	double incomeBL = 0, incomeLP = 0;
+	vector<int> resTmp(requests.size(), -1);
+	for (int i = 0; i < requests.size(); ++i)
+	{
+		incomeBL += (resX[i] == -1 ? 0 : requests[i].value);
+		for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
+			if (x_ij[i][j] == 1)
+			{
+				incomeLP += requests[i].value;
+				resTmp[i] = j;
+			}
+	}
+	if (incomeBL < incomeLP)
+		return resTmp;
 	return resX;
 }
 

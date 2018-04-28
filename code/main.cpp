@@ -16,6 +16,8 @@ int main() {
 	srand((unsigned)time(0));
 	RequestList requests(VERTEXSIZE);
 	Graph topo(VERTEXSIZE, EDGESIZE);
+	//RequestList requests(RequestPathIn);
+	//Graph topo(GraphPathIn.c_str());
 	SRMNEW srmnew(topo, requests);
 	srmnew.result.outResult();
 //	Graph topo("data/Graph/Topo_node_4.txt");

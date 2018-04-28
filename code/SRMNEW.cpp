@@ -29,11 +29,13 @@ SRMNEW::SRMNEW(Graph &topo, RequestList &requests): graph(topo),requestsList(req
     result.receiveNum = 0;
     result.income = 0;
     result.cost = 0;
+	result.passPathIndex.clear();
     for(int i = 0, count = 0; i < requests.size(); i++){
         if(removed[i]){
-            result.passPathIndex[i] = -1;
+            result.passPathIndex.push_back(-1);
+			++count;
         }else{
-            result.passPathIndex[i] = path[i - count];
+            result.passPathIndex.push_back(path[i - count]);
             result.receiveNum += 1;
             result.income += requests[i].value;
         }
@@ -45,8 +47,8 @@ SRMNEW::SRMNEW(Graph &topo, RequestList &requests): graph(topo),requestsList(req
 
 void SRMNEW::resultEqual(Result &res1, Result &res2){
 //    res1.receiveNum = res2.receiveNum;
-//    res1.income = res2.income;
-//    res1.cost = res2.cost;
+    res1.income = res2.income;
+    res1.cost = res2.cost;
     res1.peakPerEdge.clear();
     for(int peak : res2.peakPerEdge) res1.peakPerEdge.push_back(peak);
     res1.passPathIndex.clear();
@@ -95,7 +97,7 @@ Result SRMNEW::scheduleBL(RequestList &rl) {
     for(int i = 0; i < res.passPathIndex.size(); i++){
         if(res.passPathIndex[i] == -1){
             removed[rl[i - count].id] = true;
-            rl.erase(rl.begin() + i - count);
+            rl.erase(rl.begin() + (i - count));
             count ++;
         }
     }

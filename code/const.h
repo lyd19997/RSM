@@ -18,9 +18,9 @@
 #define MaxTime 10
 //-------request---------
 #define MIN_DURATION 2
-#define LAMBDA 50
-#define MEAN_TRANSFER_SIZE 20
-#define MEAN_VALUE 1
+#define LAMBDA 100
+#define MEAN_TRANSFER_SIZE 10
+#define MEAN_VALUE 100
 //--------topo---------
 #define VERTEXSIZE 4
 #define EDGESIZE 5
@@ -29,7 +29,7 @@
 #define MaxBandwidthPrice 10
 #define BANDWIDTH_CAPACITY 30
 
-#define THRESHOLDVALUE 50
+#define THRESHOLDVALUE 80
 #define EPOCHNUM 5
 //-------path--------------
 const std::string Path = "C:\\data\\";

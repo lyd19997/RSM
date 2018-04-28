@@ -17,7 +17,7 @@ class Graph {
 public:
 	int VertexNum;
 	int EdgeNum;
-	const int Prices[RANDNUM] = { 4, 6, 14, 28, 68, 85, 37, 20 };
+	const int Prices[RANDNUM] = { 25, 21, 17, 13, 29, 33, 37, 41 };
 	const int Capacity[RANDNUM] = { 50, 47, 41, 32, 69, 57, 73, 37 };
 	bool G[VERTEXSIZE][VERTEXSIZE];
 	double Bandwidth[VERTEXSIZE][VERTEXSIZE];
