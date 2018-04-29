@@ -14,10 +14,10 @@
 #define EPS 1e-5
 #define INF 0xfffffff
 //-------ISP--------
-#define PEROID 10
-#define MaxTime 10
+#define PEROID 50
+#define MaxTime 50
 //-------request---------
-#define MIN_DURATION 2
+#define MIN_DURATION 10
 #define LAMBDA 100
 #define MEAN_TRANSFER_SIZE 10
 #define MEAN_VALUE 100
@@ -30,6 +30,7 @@
 #define BANDWIDTH_CAPACITY 30
 
 #define THRESHOLDVALUE 80
+#define THRESHOL_GREEDY 10
 #define EPOCHNUM 5
 //-------path--------------
 const std::string Path = "C:\\data\\";

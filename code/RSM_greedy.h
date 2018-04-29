@@ -16,6 +16,6 @@ private:
 	vector<vector<double> > volPerTimeEdge;
 	vector<int> peakPerEdge;
 	vector<int> passPathIndex;
-	bool pushInPath(int indexReq);
+	double pushInPath(int indexReq, bool in);
 	void resOut();
 };
