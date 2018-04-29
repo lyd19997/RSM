@@ -14,10 +14,10 @@
 int main() {
 
 	srand((unsigned)time(0));
-	RequestList requests(VERTEXSIZE);
-	Graph topo(VERTEXSIZE, EDGESIZE);
-	//RequestList requests(RequestPathIn);
-	//Graph topo(GraphPathIn.c_str());
+	//RequestList requests(VERTEXSIZE);
+	//Graph topo(VERTEXSIZE, EDGESIZE);
+	RequestList requests(RequestPathIn);
+	Graph topo(GraphPathIn.c_str());
 	//SRMNEW srmnew(topo, requests);
 	//srmnew.result.outResult();
 //	Graph topo("data/Graph/Topo_node_4.txt");
@@ -60,7 +60,7 @@ int main() {
 //	//----------------------
 //	//opt
 //	//alg
-	RsmGreedy alg(topo, requests);
+	Blrsm alg(topo, requests);
 	alg.schedule();
 	alg.res.outResult();
 	cout << alg.res.income - alg.res.cost << endl;
