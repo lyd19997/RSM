@@ -340,8 +340,8 @@ void MAA::opt_bandwidthTime() {
 			if (requests[i].start > t || t > requests[i].end) continue;//if (requests.requests[i][2] > t || t > requests.requests[i][3]) continue;*****
 			for (int j = 0; j < PrReqPath[i].size(); j++) {
 				vector<int> path = graph.getPath(pair<int, int>(requests[i].src, requests[i].dst), j);
-				for(int p = 0; p < path.size() - 1; p++){
-					int index = graph.getEdgeIndex(pair<int, int>(path[p], path[p+1]));
+				for(int p = 0; p < path.size(); p++){
+					int index = path[p];
 					opt.volPerTimeEdge[t][index] += PrReqPath[i][j].get(GRB_DoubleAttr_X) * requests[i].rate;
 				}
 			}

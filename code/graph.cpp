@@ -291,7 +291,13 @@ pair<int, int> Graph::findSrcDst(int edgeIndex) {
 }
 
 vector<int> Graph::getPath(pair<int, int> srcDst, int pathIndex) {
-    return Paths[srcDst.first][srcDst.second][pathIndex];
+    vector<int> path(Paths[srcDst.first][srcDst.second][pathIndex]);
+    vector<int> final_path;
+	final_path.reserve(path.size() - 1);
+	for(int i = 0; i < path.size() - 1; i++){
+    	final_path.push_back(getEdgeIndex(pair<int, int>(path[i], path[i + 1])));
+    }
+    return final_path;
 }
 
 int Graph::getPrice(int edgeIndex) {
