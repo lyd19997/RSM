@@ -18,8 +18,8 @@ int main() {
 	Graph topo(VERTEXSIZE, EDGESIZE);
 	//RequestList requests(RequestPathIn);
 	//Graph topo(GraphPathIn.c_str());
-	SRMNEW srmnew(topo, requests);
-	srmnew.result.outResult();
+	//SRMNEW srmnew(topo, requests);
+	//srmnew.result.outResult();
 //	Graph topo("data/Graph/Topo_node_4.txt");
 //	ofstream out("data/TopoPrices.txt");
 //	for(int i = 0; i < topo.getEdgeNum(); i++){
