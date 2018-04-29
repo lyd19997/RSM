@@ -18,6 +18,7 @@ public:
     RequestList requestsList;
     Result result;
     vector<bool> removed;
+    vector<bool> tempermoved;
 
     SRMNEW(Graph &topo, RequestList &requests);
     Result scheduleMAA(RequestList &rl);

@@ -7,6 +7,7 @@
 SRMNEW::SRMNEW(Graph &topo, RequestList &requests): graph(topo),requestsList(requests), result(topo, requests){
     for(int i = 0; i < requests.size(); i++){
         removed.push_back(false);
+        tempermoved.push_back(false);
     }
     result.algName = "SRMNEW";
     result.requestNum = requestsList.size();
@@ -15,6 +16,9 @@ SRMNEW::SRMNEW(Graph &topo, RequestList &requests): graph(topo),requestsList(req
     result.cost = 0;
     ofstream out( "SRMNEW_log.txt");
     for(int i = 0; i < EPOCHNUM; i++){
+        for(int i = 0; i < requests.size(); i++){
+            removed[i] = tempermoved[i];
+        }
         Result tempRes1 = scheduleMAA(tempRl);
         out << "MAA " << tempRes1.income - tempRes1.cost << endl;
         if(tempRes1.income - tempRes1.cost > result.income - result.cost) resultEqual(result, tempRes1);
@@ -96,7 +100,7 @@ Result SRMNEW::scheduleBL(RequestList &rl) {
     int count = 0;
     for(int i = 0; i < res.passPathIndex.size(); i++){
         if(res.passPathIndex[i] == -1){
-            removed[rl[i - count].id] = true;
+            tempermoved[rl[i - count].id] = true;
             rl.erase(rl.begin() + (i - count));
             count ++;
         }
