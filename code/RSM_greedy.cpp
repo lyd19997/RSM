@@ -6,6 +6,16 @@ RsmGreedy::RsmGreedy(Graph topo_, RequestList requests_) :peakPerEdge(topo_.getE
 }
 
 void RsmGreedy::schedule() {
+	priority_queue < pair<double, int>, vector<pair<double, int> >, std::less<pair<double, int>>> Q;
+	for (int i = 0; i < requests.size(); ++i)
+		Q.push(pair<double, int>(pushInPath(i,0), i));
+
+	for (int i = 0; i < THRESHOL_GREEDY*1.0 / 100 * requests.size(); ++i)
+	{
+		pushInPath(Q.top().second, 1);
+		Q.pop();
+	}
+
 	int flag = 1;
 	while (flag)
 	{
@@ -13,14 +23,14 @@ void RsmGreedy::schedule() {
 		for (int i = 0; i < requests.size(); ++i)
 		{
 			if (passPathIndex[i] == -1)
-				 flag |= pushInPath(i);
+				flag |= (pushInPath(i,0) > 0);
 		}
 	}
 	resOut();
 }
 
 
-bool RsmGreedy::pushInPath(int indexReq) {
+double RsmGreedy::pushInPath(int indexReq, bool in) {
 	double income = requests[indexReq].value;
 	double minCost = INF;
 	vector<vector<double> > minCostAllocate;
@@ -42,7 +52,7 @@ bool RsmGreedy::pushInPath(int indexReq) {
 				if (preAllocateVol[t][i] > peak[i]) peak[i] = ceil(preAllocateVol[t][i]);
 			cost += (peak[i] - peakPerEdge[i])*topo.getPrice(i);
 		}
-		if (cost < income&&cost < minCost)
+		if ((cost < income || in) && cost < minCost)
 		{
 			minPeak = peak;
 			minCost = cost;
@@ -54,9 +64,8 @@ bool RsmGreedy::pushInPath(int indexReq) {
 	{
 		peakPerEdge = minPeak;
 		volPerTimeEdge = minCostAllocate;
-		return 1;
 	}
-	return 0;
+	return income - minCost;
 }
 
 void RsmGreedy::resOut() {
