@@ -21,7 +21,8 @@ void Result::outResult() {
 	
 	out << income << endl;
 	out << cost << endl;
-	
+	out << "--revenue--" << endl;
+	out << income - cost << endl;
 	out << "--passPathIndex--" << endl;
 	if (!passMultiPathindex.size())
 	{

@@ -26,6 +26,8 @@ SRM::SRM(Graph &topo, RequestList &requests):graph(topo),requests(requests), mod
     opt.requestNum = requests.size();
     opt.algName = "SRM-OPT";
     schedule();
+	result.getRunTime();
+	opt.getRunTime();
 }
 
 void SRM::schedule() {

@@ -109,22 +109,22 @@ vector<int> Blrsm::TAA() {
 	cout << opt << " " << E << " " << (E / opt) << " p: " << (E / opt)*(1 - delta[0]) << endl;
 	//system("pause");
 	//-------------
-	//for (int i = 0; i < requests.size(); ++i)
-	//{
-	//	double minPr = 1;
-	//	for (int j = topo.pathSize(requests[i].getSrcDst()) - 1; j >= -1; --j)
-	//	{
-	//		if (j >= 0 && !x_ij[i][j]) continue;
+	for (int i = 0; i < requests.size(); ++i)
+	{
+		double minPr = 1;
+		for (int j = topo.pathSize(requests[i].getSrcDst()) - 1; j >= -1; --j)
+		{
+			if (j >= 0 && !x_ij[i][j]) continue;
 
-	//		double tmpPr = PrUpperBound(i, resX, j);
-	//		if (tmpPr < minPr)
-	//		{
-	//			minPr = tmpPr;
-	//			resX[i] = j;
-	//		}
-	//	}
-	//	cout << i << " : " << resX[i] << "   " << minPr << endl;
-	//}
+			double tmpPr = PrUpperBound(i, resX, j);
+			if (tmpPr < minPr)
+			{
+				minPr = tmpPr;
+				resX[i] = j;
+			}
+		}
+		cout << i << " : " << resX[i] << "   " << minPr << endl;
+	}
 	//--------------------------
 	double incomeBL = 0, incomeLP = 0;
 	vector<int> resTmp(requests.size(), -1);
@@ -140,7 +140,7 @@ vector<int> Blrsm::TAA() {
 	}
 	if (incomeBL < incomeLP)
 		return resTmp;
-	return resTmp;
+	return resX;
 }
 
 double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
@@ -246,42 +246,6 @@ vector<vector<double> > Blrsm::relaxation_LP() {
 				res_.push_back(vector<double>());
 				for (int j = addr[i]; j < addr[i + 1]; ++j)
 					res_.back().push_back(xReqPath[j].get(GRB_DoubleAttr_X));
-			}
-		}
-		//----debug-----
-
-		for (int i = 0; i < requests.size(); ++i)
-		{
-			for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
-			{
-				for (int t = requests[i].start; t <= requests[i].end; ++t)
-				{
-					for (int e = 0; e < topo.getEdgeNum(); ++e)
-					{
-						if (topo.linkInPath(e, requests[i].getSrcDst(), j))
-						{
-							res.volPerTimeEdge[t][e] += requests[i].rate*res_[i][j];
-							if (res.volPerTimeEdge[t][e] > topo.linkCapacity(e))
-								cout << "error" << endl;
-						}
-					}
-				}
-			}
-		}
-		for (int i = 0; i < requests.size(); ++i)
-		{
-			for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
-			{
-				vector<int> edgeList = topo.getPath(requests[i].getSrcDst(), j);
-				for (vector<int>::iterator ite = edgeList.begin(); ite != edgeList.end(); ++ite)
-				{
-					for (int t = requests[i].start; t <= requests[i].end; ++t)
-					{
-						res.volPerTimeEdge[t][*ite] += requests[i].rate*res_[i][j];
-						if (res.volPerTimeEdge[t][*ite] > topo.linkCapacity(*ite))
-							cout << "error" << endl;
-					}
-				}
 			}
 		}
 	}
