@@ -92,21 +92,21 @@ vector<int> Blrsm::TAA() {
 		mid = (right + left) / 2;
 		//cout << cnt << endl;//debug
 		if (cnt < -100)
-			cout << bound <<" error delta0 "<<DELTA0(1)<< endl;
+			goto number1;
 	}
 	delta[0] = mid;
 	//------------bound-----------
-	double E = 0, opt = 0;
-	for (int i = 0; i < x_ij.size(); ++i)                      //init Pr 
-	{
-		for (int j = 0; j < x_ij[i].size(); ++j)
-		{
-			E += Pr_ij[i][j] * requests[i].value *maxValue;
-			opt += x_ij[i][j] * requests[i].value *maxValue;;
-		}
-	}
-	cout << E << " " << 1 - delta[0] << " -> " << E*(1 - delta[0]) << endl;
-	cout << opt << " " << E << " " << (E / opt) << " p: " << (E / opt)*(1 - delta[0]) << endl;
+//	double E = 0, opt = 0;
+//	for (int i = 0; i < x_ij.size(); ++i)                      //init Pr
+//	{
+//		for (int j = 0; j < x_ij[i].size(); ++j)
+//		{
+//			E += Pr_ij[i][j] * requests[i].value *maxValue;
+//			opt += x_ij[i][j] * requests[i].value *maxValue;;
+//		}
+//	}
+//	cout << E << " " << 1 - delta[0] << " -> " << E*(1 - delta[0]) << endl;
+//	cout << opt << " " << E << " " << (E / opt) << " p: " << (E / opt)*(1 - delta[0]) << endl;
 	//system("pause");
 	//-------------
 	for (int i = 0; i < requests.size(); ++i)
@@ -126,6 +126,7 @@ vector<int> Blrsm::TAA() {
 		cout << i << " : " << resX[i] << "   " << minPr << endl;
 	}
 	//--------------------------
+			number1:
 	double incomeBL = 0, incomeLP = 0;
 	vector<int> resTmp(requests.size(), -1);
 	for (int i = 0; i < requests.size(); ++i)

@@ -48,7 +48,7 @@ RequestList::RequestList(int topoVertexSize) {
 			int dst = pos % ((topoVertexSize - 1));
 			double rate_ = randomExponential(1.0)*MEAN_TRANSFER_SIZE;
 			if (rate_ > 32) rate_ = 32;//wakaka
-			rate_ /= 4; //32
+			rate_ /= 32; //32
 			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, 
 				(2 + rand() % 39)*1.0/40*MEAN_VALUE, rate_));
 		}

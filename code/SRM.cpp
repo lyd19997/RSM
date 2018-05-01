@@ -26,8 +26,6 @@ SRM::SRM(Graph &topo, RequestList &requests):graph(topo),requests(requests), mod
     opt.requestNum = requests.size();
     opt.algName = "SRM-OPT";
     schedule();
-	result.getRunTime();
-	opt.getRunTime();
 }
 
 void SRM::schedule() {
@@ -38,6 +36,8 @@ void SRM::schedule() {
     setObj();
     linearSolver();
     TAASolver();
+//    ---------------------------------------
+//    result.income -= result.cost;
 }
 
 void SRM::PrReqPath_init() {
@@ -205,7 +205,7 @@ bool SRM::linearSolver() {
 void SRM::TAASolver() {
     Blrsm alg(graph, requests);
     alg.schedule();
-    alg.res.outResult();
+//    alg.res.outResult();
     passPathIndex = alg.res.passPathIndex;
     result.passPathIndex = alg.res.passPathIndex;
     result.peakPerEdge = alg.res.peakPerEdge;
@@ -280,6 +280,9 @@ bool SRM::DEL(int reqIndex) {
         int e_index = graph.getEdgeIndex(pair<int, int>(e_s, e_d));
         for(int t = start; t <= end; t++){
             volPerTimeEdge[t][e_index] -= requests[reqIndex].rate;
+            if(volPerTimeEdge[t][e_index] < 0){
+                volPerTimeEdge[t][e_index] = 0;
+            }
         }
     }
     double cost = calCost(peakPerEdge, volPerTimeEdge);
