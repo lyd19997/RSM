@@ -96,19 +96,20 @@ vector<int> Blrsm::TAA() {
 	}
 	delta[0] = mid;
 	//------------bound-----------
-	double E = 0, opt = 0;
-	for (int i = 0; i < x_ij.size(); ++i)                      //init Pr 
-	{
-		for (int j = 0; j < x_ij[i].size(); ++j)
-		{
-			E += Pr_ij[i][j] * requests[i].value *maxValue;
-			opt += x_ij[i][j] * requests[i].value *maxValue;;
-		}
-	}
-	cout << E << " " << 1 - delta[0] << " -> " << E*(1 - delta[0]) << endl;
-	cout << opt << " " << E << " " << (E / opt) << " p: " << (E / opt)*(1 - delta[0]) << endl;
+	//double E = 0, opt = 0;
+	//for (int i = 0; i < x_ij.size(); ++i)                      //init Pr 
+	//{
+	//	for (int j = 0; j < x_ij[i].size(); ++j)
+	//	{
+	//		E += Pr_ij[i][j] * requests[i].value *maxValue;
+	//		opt += x_ij[i][j] * requests[i].value *maxValue;;
+	//	}
+	//}
+	//cout << E << " " << 1 - delta[0] << " -> " << E*(1 - delta[0]) << endl;
+	//cout << opt << " " << E << " " << (E / opt) << " p: " << (E / opt)*(1 - delta[0]) << endl;
 	//system("pause");
 	//-------------
+	preCalcPow();
 	for (int i = 0; i < requests.size(); ++i)
 	{
 		double minPr = 1;
@@ -142,6 +143,19 @@ vector<int> Blrsm::TAA() {
 		return resTmp;
 	return resX;
 }
+void Blrsm::preCalcPow() {
+	valuePow.clear();
+	for (int i = 0; i < requests.size(); ++i)
+		valuePow.push_back(powl(1 + delta[0], -1 * requests[i].value));
+
+	ratePow.clear();
+	for (int e = 0; e < topo.getEdgeNum(); ++e)
+	{
+		ratePow.push_back(vector<double>());
+		for (int i = 0; i < requests.size(); ++i)
+			ratePow.back().push_back(powl(1 + delta[e + 1], requests[i].rate));
+	}
+}
 
 double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 	double res_ = 0;
@@ -158,12 +172,12 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 		double sumPr = 0;
 		for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
 			sumPr += Pr_ij[i][j];
-		prod *= sumPr*powl(1 + delta[0], -1 * requests[i].value) + 1 - sumPr;
+		prod *= sumPr*valuePow[i] + 1 - sumPr;
 	}
 	res_ += powl(1 + delta[0], Fbound - gotValue)*prod;
 	//cout <</* branch<<"  "<<*/res_ << endl;
 	//---------------------------------------------------------
-	double debug = 0;
+	//double debug = 0;
 	for (int k = 0; k < PEROID*topo.getEdgeNum(); ++k)//[T][N]
 	{
 		if (!topo.linkCapacity(k%topo.getEdgeNum()))
@@ -185,11 +199,11 @@ double Blrsm::PrUpperBound(int deep, const vector<int> &resX, int branch) {
 			double sumDelta = 1;
 			for (int j = 0; j < topo.pathSize(requests[i].getSrcDst()); ++j)
 				if ((k / topo.getEdgeNum() >= requests[i].start&&k / topo.getEdgeNum() <= requests[i].end) && topo.linkInPath(k%topo.getEdgeNum(), requests[i].getSrcDst(), j))
-				sumDelta += Pr_ij[i][j] * powl(1 + delta[k%topo.getEdgeNum()+1], requests[i].rate) - Pr_ij[i][j];
+				sumDelta += Pr_ij[i][j] * ratePow[k%topo.getEdgeNum()][i] - Pr_ij[i][j];
 			prod *= sumDelta;
 		}
 		res_ += powl(1 + delta[k%topo.getEdgeNum()+1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
-		debug += powl(1 + delta[k%topo.getEdgeNum() + 1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
+		//debug += powl(1 + delta[k%topo.getEdgeNum() + 1], sumCapacity - topo.linkCapacity(k%topo.getEdgeNum()))*prod;
 	}
 		cout <</* branch<<"  "<<*/res_ << endl;//debug
 	return res_;

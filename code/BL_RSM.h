@@ -33,4 +33,7 @@ private:
 
 
 	double maxValue = 0, maxRate = 0;//request
+	vector<double> valuePow;
+	vector<vector<double> > ratePow;
+	void preCalcPow();
 };
