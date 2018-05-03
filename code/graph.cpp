@@ -61,14 +61,6 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
         BandwidthLim[unconnected[end]][connected[start]] = capacity;
         BandwidthPrice[connected[start]][unconnected[end]] = prices;
         BandwidthPrice[unconnected[end]][connected[start]] = prices;
-//		vector<int> temp;
-//		temp.push_back(start);
-//		temp.push_back(end);
-//		Paths[start][end].push_back(temp);
-//		temp.clear();
-//		temp.push_back(end);
-//		temp.push_back(start);
-//		Paths[end][start].push_back(temp);
 		connected.push_back(unconnected[end]);
 		unconnected.erase(unconnected.begin() + end);
 		leftNum--;
@@ -85,14 +77,6 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
             BandwidthLim[connected[end]][connected[start]] = capacity;
             BandwidthPrice[connected[start]][connected[end]] = prices;
             BandwidthPrice[connected[end]][connected[start]] = prices;
-//			vector<int> temp;
-//			temp.push_back(start);
-//			temp.push_back(end);
-//			Paths[start][end].push_back(temp);
-//			temp.clear();
-//			temp.push_back(end);
-//			temp.push_back(start);
-//			Paths[end][start].push_back(temp);
 			leftNum--;
 		}
 	}
@@ -163,6 +147,9 @@ void Graph::sortByLength() {
 	for(int i = 0; i < VertexNum; i++){
 		for(int j = 0; j < VertexNum; j++){
 			sort(Paths[i][j].begin(), Paths[i][j].end(), cmp);
+			while(Paths[i][j].size() > KSHORTEST){
+			    Paths[i][j].erase(Paths[i][j].begin() + KSHORTEST);
+			}
 		}
 	}
 }
@@ -250,7 +237,7 @@ int Graph::pathSize(pair<int, int>srcDst) {
 
 double Graph::linkCapacity(int edgeIndex) {
     pair<int, int> srcDst = findSrcDst(edgeIndex);
-	return 32;//BandwidthLim[srcDst.first][srcDst.second];
+	return BandwidthLim[srcDst.first][srcDst.second];
 }
 
 bool Graph::linkInPath(int edgeIndex, pair<int, int>srcDst, int pathIndex) {

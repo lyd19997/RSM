@@ -14,19 +14,28 @@ SRMNEW::SRMNEW(Graph &topo, RequestList &requests): graph(topo),requestsList(req
     RequestList tempRl(requestsList);
     result.income = 0;
     result.cost = 0;
-    ofstream out( "SRMNEW_log.txt");
+    ofstream out( "SRMNEW_log_LAMBDA_" + to_string(LAMBDA) + ".txt");
     for(int i = 0; i < EPOCHNUM; i++){
-        for(int i = 0; i < requests.size(); i++){
-            removed[i] = tempermoved[i];
-        }
         Result tempRes1 = scheduleMAA(tempRl);
         out << "MAA " << tempRes1.income - tempRes1.cost << endl;
         if(tempRes1.income - tempRes1.cost > result.income - result.cost) resultEqual(result, tempRes1);
-        else break;
+//        else break;
         Result tempRes2 = scheduleBL(tempRl);
         out << "BLSRM " <<  tempRes2.income - tempRes2.cost << endl;
-        if(tempRes2.income - tempRes2.cost > result.income - result.cost) resultEqual(result, tempRes2);
-        else break;
+        if(tempRes2.income - tempRes2.cost > result.income - result.cost) {
+            resultEqual(result, tempRes2);
+            int count = 0;
+            for(int i = 0; i < tempRes2.passPathIndex.size(); i++){
+                if(tempRes2.passPathIndex[i] == -1){
+                    tempRl.erase(tempRl.begin() + (i - count));
+                    count ++;
+                }
+            }
+            for(int i = 0; i < requests.size(); i++){
+                removed[i] = tempermoved[i];
+            }
+        }
+//        else break;
     }
 //    result.requestNum = requestsList.size();
     vector<int> path(result.passPathIndex);
@@ -101,7 +110,6 @@ Result SRMNEW::scheduleBL(RequestList &rl) {
     for(int i = 0; i < res.passPathIndex.size(); i++){
         if(res.passPathIndex[i] == -1){
             tempermoved[rl[i - count].id] = true;
-            rl.erase(rl.begin() + (i - count));
             count ++;
         }
     }
