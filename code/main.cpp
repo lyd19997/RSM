@@ -8,6 +8,8 @@
 #include"RSM_greedy.h"
 #include "SRM.h"
 #include "SRMNEW.h"
+#include "MAAOPT.h"
+#include "ILP.h"
 #include <time.h>
 
 
@@ -16,10 +18,17 @@ int main() {
 	srand((unsigned)time(0));
 	RequestList requests(VERTEXSIZE);
 	Graph topo(VERTEXSIZE, EDGESIZE);
-	//RequestList requests(RequestPathIn);
-	//Graph topo(GraphPathIn.c_str());
-	//SRMNEW srmnew(topo, requests);
-	//srmnew.result.outResult();
+//	RequestList requests(RequestPathIn);
+//	Graph topo(GraphPathIn.c_str());
+	ILP ilp(topo, requests);
+	ilp.result.outResult();
+	SRMNEW srmnew(topo, requests);
+	srmnew.result.outResult();
+//	RsmGreedy alg(topo, requests);
+//	alg.schedule();
+//	alg.res.outResult();
+
+
 //	Graph topo("data/Graph/Topo_node_4.txt");
 //	ofstream out("data/TopoPrices.txt");
 //	for(int i = 0; i < topo.getEdgeNum(); i++){
@@ -28,15 +37,21 @@ int main() {
 //	RequestList requests(RequestPathOut);
 	//Graph topo(GraphPathIn.c_str());
 
-	SRM srm(topo, requests);
-	srm.opt.outResult();
-	srm.result.outResult();
+//	SRM srm(topo, requests);
+//	srm.opt.outResult();
+//	srm.result.outResult();
 //	cout << srm.result.income - srm.result.cost << endl;
 //	cout << srm.opt.income - srm.opt.cost << endl;
 	//-------RL-SRM---------
 	//opt
 //	MAA alg(topo, requests);
 //	alg.result.outResult();
+
+
+//	MAAOPT maaopt(topo, requests);
+//	maaopt.result.outResult();
+
+
 //	alg.opt.outResult();
 //	FlowBase fb(topo, requests);
 //	fb.result.outResult();
@@ -53,6 +68,11 @@ int main() {
 	//-------BL-RSM---------
 //	//opt
 //	Blrsm alg(topo, requests);
+//	alg.schedule();
+//	alg.res.outResult();
+//	Amoeba amoeba(topo, requests);
+//	amoeba.schedule();
+//	amoeba.res.outResult();
 //	//Amoeba alg(topo, requests);
 //	//ValueFirst alg(topo, requests);
 //
@@ -60,10 +80,11 @@ int main() {
 //	//----------------------
 //	//opt
 //	//alg
-	RsmGreedy alg(topo, requests);
-	alg.schedule();
-	alg.res.outResult();
-	cout << alg.res.income - alg.res.cost << endl;
+
+
+
+
+//	cout << alg.res.income - alg.res.cost << endl;
 
 	
 	return 0;

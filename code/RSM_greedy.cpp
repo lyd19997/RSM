@@ -35,7 +35,7 @@ double RsmGreedy::pushInPath(int indexReq, bool in) {
 	double minCost = INF;
 	vector<vector<double> > minCostAllocate;
 	vector<int> minPeak;
-	for (int i = min(1, topo.pathSize(requests[indexReq].getSrcDst()) - 1); i < min(2,topo.pathSize(requests[indexReq].getSrcDst()))/*topo.pathSize(requests[indexReq].getSrcDst())*/; ++i)
+	for (int i = min((indexReq % 100 < 35 ? 0 : 1), topo.pathSize(requests[indexReq].getSrcDst()) - 1); i < min(2,topo.pathSize(requests[indexReq].getSrcDst()))/*topo.pathSize(requests[indexReq].getSrcDst())*/; ++i)
 	{
 		vector<vector<double> > preAllocateVol(volPerTimeEdge);
 		for (int t = requests[indexReq].start; t <= requests[indexReq].end; ++t)

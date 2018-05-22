@@ -13,15 +13,37 @@ SRMNEW::SRMNEW(Graph &topo, RequestList &requests): graph(topo),requestsList(req
     result.requestNum = requestsList.size();
     RequestList tempRl(requestsList);
     result.income = 0;
-    result.cost = 0;
+    result.cost = INF;
+//    vector<double> revenue;
     ofstream out( "SRMNEW_log_LAMBDA_" + to_string(LAMBDA) + ".txt");
     for(int i = 0; i < EPOCHNUM; i++){
         Result tempRes1 = scheduleMAA(tempRl);
-        out << "MAA " << tempRes1.income - tempRes1.cost << endl;
+//        out << "MAA "<<" revenue"<< tempRes1.income - tempRes1.cost << " income" <<tempRes1.income<< " "<<"cost"<<tempRes1.cost << " receiveNum"<<tempRes1.receiveNum<<" requestnum"<< tempRl.size()<<endl;
+//        revenue.push_back(tempRes1.income - tempRes1.cost);
         if(tempRes1.income - tempRes1.cost > result.income - result.cost) resultEqual(result, tempRes1);
+        else if (i!=0){
+            for(int i = 0; i < result.peakPerEdge.size(); i++) {
+                double flow = 0;
+                for (int t = 0; t < result.volPerTimeEdge.size(); t++) {
+                    flow += result.volPerTimeEdge[t][i];
+                }
+                double usage = flow / PEROID / result.peakPerEdge[i];
+                if (usage * 100 > THRESHOLDVALUE) {
+                    graph.BandwidthLim[graph.findSrcDst(i).first][graph.findSrcDst(i).second] = result.peakPerEdge[i];
+                } else {
+                    graph.BandwidthLim[graph.findSrcDst(i).first][graph.findSrcDst(i).second] =
+                            result.peakPerEdge[i] * THRESHOLDVALUE * 1.0 / 100;
+                }
+
+            }
+        }
+
+        out << "MAA "<<" revenue"<< tempRes1.income - tempRes1.cost << " income" <<tempRes1.income<< " "<<"cost"<<result.cost << " receiveNum"<<tempRes1.receiveNum<<" requestnum"<< tempRl.size()<<endl;
+//        if(find(revenue.begin(), revenue.end(), tempRes1.income - tempRes1.cost) != revenue.end()) break;
 //        else break;
         Result tempRes2 = scheduleBL(tempRl);
-        out << "BLSRM " <<  tempRes2.income - tempRes2.cost << endl;
+        out << "BLSRM " <<" revenue"<< tempRes2.income - tempRes2.cost << " income" <<tempRes2.income<< " "<<"cost"<<tempRes2.cost << " receiveNum "<<tempRes2.receiveNum<< " requestnum"<< tempRl.size()<<endl;
+//        revenue.push_back(tempRes2.income - tempRes2.cost);
         if(tempRes2.income - tempRes2.cost > result.income - result.cost) {
             resultEqual(result, tempRes2);
             int count = 0;
@@ -35,13 +57,14 @@ SRMNEW::SRMNEW(Graph &topo, RequestList &requests): graph(topo),requestsList(req
                 removed[i] = tempermoved[i];
             }
         }
+//        if(find(revenue.begin(), revenue.end(), tempRes2.income - tempRes2.cost) != revenue.end()) break;
 //        else break;
     }
 //    result.requestNum = requestsList.size();
     vector<int> path(result.passPathIndex);
     result.receiveNum = 0;
-    result.income = 0;
-    result.cost = 0;
+//    result.income = 0;
+//    result.cost = 0;
 	result.passPathIndex.clear();
     for(int i = 0, count = 0; i < requests.size(); i++){
         if(removed[i]){
@@ -50,12 +73,13 @@ SRMNEW::SRMNEW(Graph &topo, RequestList &requests): graph(topo),requestsList(req
         }else{
             result.passPathIndex.push_back(path[i - count]);
             result.receiveNum += 1;
-            result.income += requests[i].value;
+//            result.income += requests[i].value;
         }
     }
     for(int i = 0; i < graph.getEdgeNum(); i++){
-        result.cost += graph.BandwidthPrice[graph.findSrcDst(i).first][graph.findSrcDst(i).second] * 1.0 * result.peakPerEdge[i];
+//        result.cost += graph.BandwidthPrice[graph.findSrcDst(i).first][graph.findSrcDst(i).second] * 1.0 * result.peakPerEdge[i];
     }
+    result.getRunTime();
 }
 
 void SRMNEW::resultEqual(Result &res1, Result &res2){
@@ -102,15 +126,20 @@ Result SRMNEW::scheduleBL(RequestList &rl) {
     blrsm.schedule();
     double cost = 0;
     for(int i = 0; i < graph.getEdgeNum(); i++){
-        cost += graph.BandwidthLim[graph.findSrcDst(i).first][graph.findSrcDst(i).second] * graph.BandwidthPrice[graph.findSrcDst(i).first][graph.findSrcDst(i).second];
+        cost += /*graph.BandwidthLim[graph.findSrcDst(i).first][graph.findSrcDst(i).second]*/blrsm.res.peakPerEdge[i] * graph.BandwidthPrice[graph.findSrcDst(i).first][graph.findSrcDst(i).second];
     }
     Result res(blrsm.res);
     res.cost = cost;
+    res.receiveNum = 0;
+    res.income = 0;
     int count = 0;
     for(int i = 0; i < res.passPathIndex.size(); i++){
         if(res.passPathIndex[i] == -1){
             tempermoved[rl[i - count].id] = true;
             count ++;
+        }else {
+            res.receiveNum += 1;
+            res.income += rl[i].value;
         }
     }
     return res;

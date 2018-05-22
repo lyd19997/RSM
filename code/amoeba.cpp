@@ -25,14 +25,15 @@ vector<int> Amoeba::schedule() {
 }
 
 int Amoeba::pushInPath(int indexReq, vector<vector<double>> &remainCapacityPerEdge) {
-	for (int i = 0; i < topo.pathSize(requests[indexReq].getSrcDst()); ++i)
+	for (int i = min(0, topo.pathSize(requests[indexReq].getSrcDst()) - 1); i < min(INF,topo.pathSize(requests[indexReq].getSrcDst())); ++i)
 	{
 		vector<int> edgeList = topo.getPath(requests[indexReq].getSrcDst(), i);
-		vector<int>::iterator it = edgeList.begin();
+		auto it = edgeList.begin();
 		for (int t = requests[indexReq].start; t <= requests[indexReq].end; ++t)
 		{
 			//cout << remainCapacityPerEdge[t][*it] << "    " << requests[indexReq].rate<<end;;//debug
-			for (it = edgeList.begin(); it != edgeList.end() && !(remainCapacityPerEdge[t][*it] < requests[indexReq].rate); ++it)
+			for (it = edgeList.begin(); it != edgeList.end() &&
+										remainCapacityPerEdge[t][*it] >= requests[indexReq].rate; ++it)
 				;
 			if (it != edgeList.end()) break;
 		}

@@ -3,6 +3,7 @@
 //
 
 #include "graph.h"
+#include "climits"
 
 
 
@@ -77,6 +78,14 @@ Graph::Graph(int vertexNum, int edgeNum) {//使用点数和边数生成无向联通图
             BandwidthLim[connected[end]][connected[start]] = capacity;
             BandwidthPrice[connected[start]][connected[end]] = prices;
             BandwidthPrice[connected[end]][connected[start]] = prices;
+//			vector<int> temp;
+//			temp.push_back(start);
+//			temp.push_back(end);
+//			Paths[start][end].push_back(temp);
+//			temp.clear();
+//			temp.push_back(end);
+//			temp.push_back(start);
+//			Paths[end][start].push_back(temp);
 			leftNum--;
 		}
 	}
@@ -148,7 +157,7 @@ void Graph::sortByLength() {
 		for(int j = 0; j < VertexNum; j++){
 			sort(Paths[i][j].begin(), Paths[i][j].end(), cmp);
 			while(Paths[i][j].size() > KSHORTEST){
-			    Paths[i][j].erase(Paths[i][j].begin() + KSHORTEST);
+				Paths[i][j].erase(Paths[i][j].begin() + KSHORTEST);
 			}
 		}
 	}

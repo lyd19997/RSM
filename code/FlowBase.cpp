@@ -159,11 +159,11 @@ void FlowBase::pathSelecting() {
         vector<int> path(paths[index]);
         final_path.push_back(path);
         result.passPathIndex[i]=index;
-        printf("path for request#%d: ", i);
+//        printf("path for request#%d: ", i);
         for(int j = 0; j < path.size(); j++){
-            printf("%d->", path[j]);
+           // printf("%d->", path[j]);
         }
-        printf("\n");
+       // printf("\n");
     }
 }
 
@@ -184,18 +184,18 @@ void FlowBase::bandwidthCal() {
 
 void FlowBase::printResult() {
     for(int i = 0; i < requests.size(); i++){
-        printf("route for request #%d\n", i);
+//        printf("route for request #%d\n", i);
         for(int j : final_path[i]){
-            printf("%d->", j);
+            //printf("%d->", j);
         }
-        printf("\n\n");
+        //printf("\n\n");
     }
     printf("Bandwidth\n");
     for(int s = 0; s < VertexNum; s++){
         for(int d = 0; d < VertexNum; d++){
-            printf("%d ", final_bandwidth[s][d]);
+            //printf("%d ", final_bandwidth[s][d]);
         }
-        printf("\n");
+        //printf("\n");
     }
     printf("\n\n");
     printf("final cost : ");

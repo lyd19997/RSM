@@ -22,8 +22,12 @@ private:
 	vector<double> delta;
 	vector<double> scaling;
 	double Fs;
+	double bandwidthTime[PEROID][EDGESIZE];
 	
 	vector<int> passPathIndex;
+
+	vector<vector<bool>> linkInPath[VERTEXSIZE][VERTEXSIZE];
+	void linkInPathInit();
 
 	vector<vector<double> > relaxation_LP();
 	double PrUpperBound(int deep, const vector<int> &resX,int branch);
@@ -35,5 +39,7 @@ private:
 	double maxValue = 0, maxRate = 0;//request
 	vector<double> valuePow;
 	vector<vector<double> > ratePow;
+	vector<vector<double> > x_ij;
 	void preCalcPow();
+	void errorHandling();
 };

@@ -6,6 +6,7 @@ using namespace std;
 
 int possion(int lambda)  /* 产生一个泊松分布的随机数，Lamda为总体平均数*/
 {
+//	lambda *= 3;
 	const int precision = 1000;
 	int k = 0;
 	long double p = 1.0;
@@ -38,19 +39,23 @@ double randomExponential(double lambda)
 RequestList::RequestList(int topoVertexSize) {
 	int id = 0;
 	//double threshold = 0, sumDemand = 0;
-	for (int t = 0; t < (PEROID - 3 * MIN_DURATION); ++t)
+	for (int t = 0; t < (PEROID /*- 3 * MIN_DURATION*/); ++t)
 	{
 		int arrivalRate = possion(LAMBDA);
-		for (int j = 1; j <= arrivalRate; j++)
+		for (int j = 1; j <= arrivalRate; j++) //10, 20, 30, ...
 		{
 			int pos = rand() % (topoVertexSize*(topoVertexSize - 1));
 			int src = pos / (topoVertexSize - 1);
 			int dst = pos % ((topoVertexSize - 1));
-			double rate_ = randomExponential(1.0)*MEAN_TRANSFER_SIZE;
+			//int lastTime = rand() % (2 * MIN_DURATION) + MIN_DURATION;
+			int lastTime = (rand() % (PEROID - t));
+			double rate_ = randomExponential(1.0) * MEAN_TRANSFER_SIZE;
 			if (rate_ > 32) rate_ = 32;//wakaka
-			rate_ /= 32; //32
-			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION, 
-				(2 + rand() % 39)*1.0/40*MEAN_VALUE, rate_));
+			rate_ /= 20; //32
+//			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + rand() % (2 * MIN_DURATION) + MIN_DURATION,
+//				1/*(2 + rand() % 39)*1.0/40*MEAN_VALUE*/, rate_));
+			push_back(Request(id++, src, (dst < src ? dst : dst + 1), t, t + lastTime,
+							  rate_ * (lastTime + 1) / PEROID * MEAN_VALUE, rate_));//revise the value
 		}
 	}
 	ofstream out(RequestPathOut);

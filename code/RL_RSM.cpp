@@ -210,7 +210,7 @@ void MAA::addConstraints() {
 					for (int i = 0; i < requestsNum; i++) {
 						//                        GRBLinExpr temp = 0;
 						for (int j = 0; j < PrReqPath[i].size(); j++) {
-							lhs += PrReqPath[i][j] * iReqPathEdge[i][j][e_s][e_t] * ((requests[i].start > t || requests[i].end < t) ? 0 : requests[i].rate * 1.0);//* requests.r_i_t[i][t] * 1.0;****
+							lhs += PrReqPath[i][j] * iReqPathEdge[i][j][e_s][e_t] * ((requests[i].start > t || requests[i].end < t) ? 0 : requests[i].rate);//* requests.r_i_t[i][t] * 1.0;****
 						}
 						//                        lhs += temp;
 					}
@@ -238,20 +238,21 @@ void MAA::pathSelecting() {
 		int start = requests[i].src, end = requests[i].dst;//int start = requests.requests[i][0], end = requests.requests[i][1];********
 		vector<vector<int>> paths = graph.Paths[start][end];
 		vector<double> pathWeight;
-
+		//-----------------------------
+		double temp = 0;
 		for (int j = 0; j < PrReqPath[i].size(); j++) {
-//			temp += PrReqPath[i][j].get(GRB_DoubleAttr_X) * j;
+			temp += PrReqPath[i][j].get(GRB_DoubleAttr_X) * j;
 			pathWeight.push_back(PrReqPath[i][j].get(GRB_DoubleAttr_X));
 		}
-//		int index = int(round(temp));
+		int index = int(round(temp));
 //		printf("chose %d\n", index);
-		double val = (rand() % 10000) * 1.0 / 10000;
+/*		double val = (rand() % 10000) * 1.0 / 10000;
 		int index = 0;
         double temp = 0;
 		for(; index < pathWeight.size(); index++){
 		    temp += pathWeight[index];
 		    if(temp >= val) break;
-		}
+		}*/
 		vector<int> path(paths[index]);
 		final_path.push_back(path);
 		result.passPathIndex[i] = index;
@@ -281,11 +282,11 @@ void MAA::bandwidthRounding() {
 
 void MAA::printResult() {
 	for (int i = 0; i < requestsNum; i++) {
-		printf("route for request #%d\n", i);
+//		printf("route for request #%d\n", i);
 		for (int j : final_path[i]) {
-			printf("%d->", j);
+//			printf("%d->", j);
 		}
-		printf("\n\n");
+//		printf("\n\n");
 	}
 	printf("Bandwidth\n");
 	for (int s = 0; s < VertexNum; s++) {
